@@ -11,7 +11,8 @@ import (
 
 // getOnBoardSearchURLTemplate é a API pública v0 do Get on Board
 // (getonbrd.com). expand=["company"] embute os dados da empresa na vaga.
-const getOnBoardSearchURLTemplate = `https://www.getonbrd.com/api/v0/search/jobs?query=%s&per_page=50&page=%d&expand=["company"]`
+// O valor de expand vai codificado: com colchetes/aspas crus a API responde 400.
+const getOnBoardSearchURLTemplate = "https://www.getonbrd.com/api/v0/search/jobs?query=%s&per_page=50&page=%d&expand=%%5B%%22company%%22%%5D"
 
 type getOnBoardResponse struct {
 	Data []getOnBoardJob `json:"data"`
