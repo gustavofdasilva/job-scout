@@ -216,3 +216,12 @@ crawlers:
     # Só ficam vagas remotas (ou presenciais no Brasil).
     search_terms: ["golang", "backend", "back-end"]
     max_pages: 2 # 50 vagas por página
+
+  # --- Startups via HTML -------------------------------------------------
+  - name: ycombinator
+    enabled: true
+    # Lê ycombinator.com/jobs/role/software-engineer/remote (JSON embutido
+    # na página) e filtra título/tipo/skills pelos termos. Busca a página
+    # de detalhe de cada vaga filtrada (até 40) pra pegar a descrição.
+    search_terms: ["backend", "golang", "go,", "node.js", "full stack", "infrastructure"]
+    max_pages: 1 # ignorado
