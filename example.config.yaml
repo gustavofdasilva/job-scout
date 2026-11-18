@@ -183,3 +183,7 @@ crawlers:
     enabled: true
     search_terms: ["golang", "backend engineer", "software engineer"]
     max_pages: 3 # 20 vagas por página
+  - name: jobicy
+    enabled: true
+    search_terms: ["golang", "backend", "software engineer"] # usados como ?tag=
+    max_pages: 2 # 50 vagas por página

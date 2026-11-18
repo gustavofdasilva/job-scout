@@ -1,0 +1,109 @@
+{
+ "apiVersion": "2.2.19",
+ "documentationUrl": "https://jobi.cy/apidocs",
+ "friendlyNotice": "Thanks for using Jobicy API! Please ensure Jobicy is clearly credited with a direct link to the source, and all application buttons redirect to the original job URL provided in this feed. That’s all! You might be building something amazing, we wish you the best of luck!",
+ "jobCount": 4,
+ "lastUpdate": "2026-11-18T04:00:12+00:00",
+ "nextCursor": null,
+ "hasMore": false,
+ "appliedFilters": {
+  "count": 50,
+  "tag": "golang"
+ },
+ "jobs": [
+  {
+   "id": 155629,
+   "url": "https://jobicy.com/jobs/155629-senior-sre-managed-gateways",
+   "jobSlug": "155629-senior-sre-managed-gateways",
+   "jobTitle": "Senior SRE, Managed Gateways",
+   "companyName": "Kong Inc.",
+   "companyLogo": "https://jobicy.com/data/server-nyc0409/galaxy/mercury/2022/03/f43352b801f4c6854ba70c5f70cec7cd.jpeg",
+   "jobIndustry": [
+    "DevOps & Infrastructure"
+   ],
+   "jobType": [
+    "Full-Time"
+   ],
+   "jobGeo": "USA",
+   "jobLevel": "Senior",
+   "jobExcerpt": "Are you ready to unlock intelligence? If you don’t think you meet all of the criteria below but are still interested in the job, please apply. Nobody checks every box - we’re looking for candidates that are particularly strong in a few areas, and have some interest and capabilities in others. Senior SRE, Managed Gateways&hellip;",
+   "jobDescription": "<p><strong>Are you ready to unlock intelligence?</strong></p>\n<p>If you don’t think you meet all of the criteria below but are still interested in the job, please apply. Nobody checks every box - we’re looking for candidates that are particularly strong in a few areas, and have some interest and capabilities in others.</p>\n</p>\n<h3><strong>Senior SRE, Managed Gateways</strong></h3>\n</p>\n<h3><strong>About the Role:</strong></h3>\n<p>Kong's Managed Gateways is the fastest-growing product in the Kong portfolio, a SaaS offering with ARR growing multifold. As a Senior Site Reliability Engineer focused on Managed Gateways, you'll be instrumental in architecting and maintaining the resilient, scalable infrastructure that powers Kong's mission-critical managed services — and you'll be the technical face of that product for the enterprise customers who depend on it, directly ensuring the reliability and performance that lets them build the next generation of connected applications at global scale.</p>\n</p>\n<h3><strong>What You’ll Do:</strong></h3>\n<p>Cloud Gateways is a complex, multi-cloud problem — supported across AWS, GCP, and Azure — and our enterprise customers run large, often unique ",
+   "pubDate": "2026-11-18T04:00:12+00:00",
+   "salaryMin": 165000,
+   "salaryMax": 185000,
+   "salaryCurrency": "USD",
+   "salaryPeriod": "yearly"
+  },
+  {
+   "id": 153466,
+   "url": "https://jobicy.com/jobs/153466-senior-devops-engineer-storage-platforms",
+   "jobSlug": "153466-senior-devops-engineer-storage-platforms",
+   "jobTitle": "Senior DevOps Engineer - Storage Platforms",
+   "companyName": "Five9",
+   "companyLogo": "https://jobicy.com/data/server-nyc0409/galaxy/mercury/2025/08/7c3d754e-221.png",
+   "jobIndustry": [
+    "DevOps & Infrastructure"
+   ],
+   "jobType": [
+    "Full-Time"
+   ],
+   "jobGeo": "USA",
+   "jobLevel": "Senior",
+   "jobExcerpt": "Join us in bringing joy to customer experience. Five9 is a leading provider of cloud contact center software, bringing the power of cloud innovation to customers worldwide. Living our values everyday results in our team-first culture and enables us to innovate, grow, and thrive while enjoying the journey together. We celebrate diversity and foster an&hellip;",
+   "jobDescription": "</p>\n<p>Join us in bringing joy to customer experience. Five9 is a leading provider of cloud contact center software, bringing the power of cloud innovation to customers worldwide. </p>\n<p>Living our values everyday results in our team-first culture and enables us to innovate, grow, and thrive while enjoying the journey together. We celebrate diversity and foster an inclusive environment, empowering our employees to be their authentic selves. </p>\n<p>We are seeking a highly experienced <strong>Senior DevOps Engineer – Storage Platforms </strong>to build, automate and operate large-scale <strong>Software Defined Storage (SDS)</strong> and <strong>Kubernetes platforms</strong> in a private cloud environment. This role focuses on Storage Engineering with Infrastructure-as-Code and GitOps practices while ensuring <strong>scalability, resilience, and performance</strong>.</p>\n<p>This is a deeply technical role requiring <strong>expert-level understanding of Software Defined Storage, Kubernetes and extensive working knowledge on Linux Operating systems. </strong>You will also collaborate with platform and SRE teams to maintain secure, performant, and multi-tenant-isolated services that s",
+   "pubDate": "2026-11-18T03:00:34+00:00",
+   "salaryMin": 90700,
+   "salaryMax": 252200,
+   "salaryCurrency": "USD",
+   "salaryPeriod": "yearly"
+  },
+  {
+   "id": 155600,
+   "url": "https://jobicy.com/jobs/155600-senior-backend-engineer-booking-integrations-contract",
+   "jobSlug": "155600-senior-backend-engineer-booking-integrations-contract",
+   "jobTitle": "Senior Backend Engineer (Booking Integrations, Contract)",
+   "companyName": "Aescape",
+   "companyLogo": "https://jobicy.com/data/server-nyc0409/galaxy/mercury/2025/06/1f469a22-221.jpg",
+   "jobIndustry": [
+    "Software Engineering"
+   ],
+   "jobType": [
+    "Contract"
+   ],
+   "jobGeo": "USA",
+   "jobLevel": "Senior",
+   "jobExcerpt": "Aescape is a New York-based physical AI and robotics company redefining human recovery through intelligent, precision bodywork, elevating it into a consistent, outcomes-driven practice. Powered by real-time body mapping, advanced robotics, and proprietary software, Aescape delivers deeply personalized bodywork that continuously adapts to the individual. This creates a superior way for members to move with&hellip;",
+   "jobDescription": "<p>Aescape is a New York-based physical AI and robotics company redefining human recovery through intelligent, precision bodywork, elevating it into a consistent, outcomes-driven practice.</p>\n<p>Powered by real-time body mapping, advanced robotics, and proprietary software, Aescape delivers deeply personalized bodywork that continuously adapts to the individual. This creates a superior way for members to move with greater ease, recover more efficiently, and optimize how they feel every single day. </p>\n<p>Aescape is building a defining brand for recovery, shifting behavior from a sporadic experience into a progressive, measurable routine, unlocking compounding benefits that build lasting resilience and laying the groundwork for an entirely new category of proactive human health and performance. </p>\n<p>Aescape powers recovery across leading fitness, hospitality, and wellness environments, including Equinox, Life Time, Marriott, Hilton, Four Seasons, Pause Studios, and Remedy Place, and is backed by Valor Equity Partners, BroadLight Capital, and Mecha Ventures.</p>\n</p>\n<p><strong>Aescape</strong> is looking for a <strong>Senior Backend Engineer (Booking Integrations, Contract)</st",
+   "pubDate": "2026-11-17T03:00:16+00:00",
+   "salaryMin": 150,
+   "salaryMax": 150,
+   "salaryCurrency": "USD",
+   "salaryPeriod": "hourly"
+  },
+  {
+   "id": 153337,
+   "url": "https://jobicy.com/jobs/153337-sales-engineer-enterprise-2",
+   "jobSlug": "153337-sales-engineer-enterprise-2",
+   "jobTitle": "Sales Engineer, Enterprise",
+   "companyName": "Socket",
+   "companyLogo": "https://jobicy.com/data/server-nyc0409/galaxy/mercury/2025/06/1314ce3c-221.png",
+   "jobIndustry": [
+    "Sales"
+   ],
+   "jobType": [
+    "Full-Time"
+   ],
+   "jobGeo": "USA",
+   "jobLevel": "Any",
+   "jobExcerpt": "About Us Socket helps devs and security teams ship faster by cutting out security busywork. Thousands of orgs use Socket to safely find, audit, and manage open source code. Our customers - from Anthropic to xAI, and Figma to Vercel - love Socket (just check out their tweets to see for yourself!) Founded by Feross&hellip;",
+   "jobDescription": "<p><strong>About Us</strong></p>\n<p>Socket helps devs and security teams ship faster by cutting out security busywork. Thousands of orgs use Socket to safely find, audit, and manage open source code. Our customers - from Anthropic to xAI, and Figma to Vercel - love Socket (just <a href=\"https://socket.dev/love\" rel=\"nofollow ugc noopener\" target=\"_blank\">check out their tweets</a> to see for yourself!)</p>\n<p>Founded by <a href=\"https://www.linkedin.com/in/feross/\" rel=\"nofollow ugc noopener\" target=\"_blank\"><strong><u>Feross Aboukhadijeh</u></strong></a>, a long-time open source maintainer with software downloaded over a billion times a month, Socket has raised <a href=\"https://socket.dev/blog/series-b\" rel=\"nofollow ugc noopener\" target=\"_blank\"><strong><u>$</u></strong></a><a href=\"https://socket.dev/blog/series-c\" rel=\"nofollow ugc noopener\" target=\"_blank\"><strong><u>125M in funding</u></strong></a> from top angels, operators, and security leaders.</p>\n</p>\n<p><strong>About the Role</strong></p>\n<p>Socket is looking for a Sales Engineer to support our enterprise customers. In this role you will be at the nexus between our customers and our engineering, product, and design team",
+   "pubDate": "2026-11-17T02:55:22+00:00",
+   "salaryMin": 190000,
+   "salaryMax": 250000,
+   "salaryCurrency": "USD",
+   "salaryPeriod": "yearly"
+  }
+ ],
+ "statusCode": 200,
+ "success": true
+}
