@@ -1,0 +1,513 @@
+{
+ "data": [
+  {
+   "id": "back-end-software-engineer-nestjs-cloud-native-aws-witi-remote-f21f",
+   "type": "job",
+   "attributes": {
+    "title": "Back-end Software Engineer – NestJS | Cloud Native | AWS",
+    "description_headline": "Requisitos excluyentes",
+    "description": "<ul><li>Experiencia desarrollando servicios backend con NestJS, TypeScript y Node.js.</li><li>Dominio de Modules, Providers, Interceptors, Guards y Custom Decorators de NestJS.</li><li>Experiencia aplicando tipado estricto, concurrencia y patrones asincrónicos.</li><li>Experiencia comprobable con Arquitectura Hexagonal, puertos y adaptadores e inversión de dependencias.</li><li>Experiencia práctica con Domain Driven Design.</li><li>Experiencia trabajando en entornos Cloud Native sobre AWS.</li><li>Experiencia con infraestructura como código mediante Terraform.</li><li>Experiencia con Docker y pipelines de CI/CD mediante GitHub Actions.</li><li>Experiencia diseñando y optimizando modelos de datos relacionales en MySQL.</li><li>Experiencia trabajando con DynamoDB y modelado NoSQL.</li><li>Ex",
+    "projects": "<p>En WiTI conectamos talento tecnológico con proyectos de alto impacto en Latinoamérica. Somos partners estratégicos de grandes organizaciones, impulsando su transformación digital mediante soluciones tecnológicas innovadoras, con foco en calidad, escalabilidad y resultados.</p><p>Actualmente, buscamos <strong>Backend Software Enginers </strong>para integrarse a un proyecto de producto en una de las principales compañías del sector retail, participando en el desarrollo y evolución de un ecosistema digital de gran escala y alcance regional.</p><p>El desafío contempla el desarrollo de soluciones backend robustas y escalables, el diseño de arquitecturas modernas y la aplicación de buenas prácticas de ingeniería en entornos Cloud Native sobre AWS. Trabajarás principalmente con <strong>NestJS,",
+    "functions_headline": "Funciones del cargo",
+    "functions": "<ul><li>Desarrollar y evolucionar servicios backend con NestJS, TypeScript y Node.js.</li><li>Implementar Modules, Providers, Interceptors, Guards y Custom Decorators.</li><li>Aplicar tipado estricto, interfaces, concurrencia y patrones asincrónicos.</li><li>Diseñar soluciones desacopladas mediante Arquitectura Hexagonal, puertos y adaptadores.</li><li>Aplicar inversión de dependencias para separar dominio, aplicación e infraestructura.</li><li>Utilizar Domain Driven Design para modelar dominios y definir sus límites.</li><li>Trabajar con servicios de AWS y analizar recursos desde la consola y mediante AWS CLI.</li><li>Diseñar soluciones orientadas a eventos mediante SNS, SQS y EventBridge.</li><li>Crear y mantener infraestructura reproducible con Terraform.</li><li>Construir y optimizar i",
+    "benefits_headline": "Beneficios",
+    "benefits": "<p>En WiTI promovemos un ambiente colaborativo donde la cultura del aprendizaje es parte fundamental. Entre nuestros beneficios están:</p><ul><li>Plan de carrera personalizado para el desarrollo profesional.</li><li>Certificaciones para continuar creciendo en tu carrera.</li><li>Cursos de idiomas, apoyando el desarrollo personal y profesional.</li></ul>",
+    "desirable_headline": "Requisitos deseables",
+    "desirable": "<ul><li>Experiencia en sistemas backend de alta disponibilidad.</li><li>Experiencia diseñando arquitecturas orientadas a eventos.</li><li>Conocimiento de Single Table Design en DynamoDB.</li><li>Experiencia optimizando imágenes Docker mediante multi-stage builds.</li><li>Manejo de AWS CLI y buenas prácticas para la gestión segura de credenciales.</li><li>Experiencia trabajando con búsquedas distribuidas y gestión de índices.</li><li>Experiencia participando simultáneamente en distintas iniciativas de producto.</li><li>Experiencia en plataformas digitales de retail o e-commerce.</li></ul>",
+    "remote": true,
+    "remote_modality": "fully_remote",
+    "remote_zone": null,
+    "countries": [
+     "Remote"
+    ],
+    "lang": "lang_not_specified",
+    "category_name": "Programming",
+    "perks": [
+     "remote_full",
+     "digital_library",
+     "computer_provided",
+     "personal_coaching",
+     "informal_dresscode"
+    ],
+    "min_salary": null,
+    "max_salary": null,
+    "published_at": 1794948031,
+    "response_time_in_days": {
+     "min": 11,
+     "max": 15
+    },
+    "applications_count": 33,
+    "location_regions": {
+     "data": []
+    },
+    "location_tenants": {
+     "data": []
+    },
+    "location_cities": {
+     "data": []
+    },
+    "modality": {
+     "data": {
+      "id": 1,
+      "type": "modality"
+     }
+    },
+    "seniority": {
+     "data": {
+      "id": 4,
+      "type": "seniority"
+     }
+    },
+    "tags": {
+     "data": [
+      {
+       "id": 58,
+       "type": "tag"
+      },
+      {
+       "id": 141,
+       "type": "tag"
+      },
+      {
+       "id": 259,
+       "type": "tag"
+      },
+      {
+       "id": 629,
+       "type": "tag"
+      },
+      {
+       "id": 828,
+       "type": "tag"
+      },
+      {
+       "id": 887,
+       "type": "tag"
+      },
+      {
+       "id": 1185,
+       "type": "tag"
+      },
+      {
+       "id": 1204,
+       "type": "tag"
+      },
+      {
+       "id": 6039,
+       "type": "tag"
+      },
+      {
+       "id": 50,
+       "type": "tag"
+      }
+     ]
+    },
+    "company": {
+     "data": {
+      "id": "witi",
+      "type": "company",
+      "attributes": {
+       "name": "WiTi",
+       "description": "WiTi, Tecnología para innovar.",
+       "long_description": "<div>Nos dedicamos al desarrollo de software y soluciones tecnológicas. Nuestra especialidad es la integración de sistemas, software a medida y desarrollos innovadores en el mundo de los dispositivos móviles. Nuestra mayor motivación es resolver problemas complejos a través de soluciones innovadoras. Nuestro método de trabajo se basa en entender el negocio y la necesidad del cliente, ; queremos ser un \"partner\", de tal modo poder apoyar en la toma de decisiones a la hora de implantar soluciones tecnológicas.</div>",
+       "projects": "<p>En WiTi conectamos al mejor talento tecnológico con proyectos de alto impacto en Latinoamérica. Somos una empresa especializada en servicios de tecnología que transforma desafíos tecnológicos en soluciones innovadoras. Desde 2017, operamos en Chile, Uruguay y Colombia, ofreciendo Talent as a Service, Software Factory y Consultoría TI Integral en áreas como cloud, DevOps e IA/ML.&nbsp;<br><br>&nbsp;El QA Automation Engineer se integrará al equipo de calidad para una plataforma enterprise de gestión publicitaria, con un monorepo que agrupa más de 12 aplicaciones dentro del ecosistema del producto. Buscamos fortalecer la estrategia de calidad, impulsar la automatización de pruebas, integrar pipelines de CI/CD y explorar herramientas de IA aplicadas a testing para detección temprana de erro",
+       "benefits": "<p>En WiTi, ofrecemos un entorno de trabajo 100% remoto, lo que permite una gran flexibilidad y autonomía. Además, promovemos un ambiente colaborativo donde la cultura del aprendizaje es parte fundamental. Entre nuestros beneficios están:</p><ul><li><strong>Plan de carrera</strong> personalizado para el desarrollo profesional.</li><li><strong>Certificaciones</strong>, para continuar creciendo en tu carrera.</li><li><strong>Cursos de idiomas</strong>, apoyando el desarrollo personal y profesional.</li></ul><p>Si eres apasionado por la tecnología y quieres formar parte de nuestro equipo, ¡nos encantaría conocerte!</p>",
+       "web": "http://www.witi.cl",
+       "twitter": "",
+       "github": "",
+       "facebook": "witi.cl",
+       "angellist": "",
+       "country": "CL",
+       "response_time_in_days": {
+        "min": 6,
+        "max": 16
+       },
+       "logo": "https://getonbrd-prod.s3.amazonaws.com/uploads/users/logo/4881/Logo_WiTI_SII.png"
+      }
+     }
+    }
+   },
+   "links": {
+    "public_url": "https://www.getonbrd.com/jobs/back-end-software-engineer-nestjs-cloud-native-aws-witi-remote-f21f"
+   }
+  },
+  {
+   "id": "software-engineer-python-softtechassociate-remote",
+   "type": "job",
+   "attributes": {
+    "title": "Software Engineer(python)",
+    "description_headline": "Qualifications",
+    "description": "<h3><strong>Required Qualifications</strong></h3><p>● Professional experience developing software with Python.</p><p>● Experience with at least one Python web framework, such as Django, Flask, or FastAPI.</p><p>● Understanding of REST APIs, backend architecture, and relational databases.</p><p>● Working knowledge of Git and common software development workflows.</p><p>● Experience writing tests and debugging application issues.</p><p>● Strong problem-solving, communication, and collaboration skills.</p><p>● Based in Latin America and able to work remotely with reliable internet access.</p><p>● Professional English communication skills and availability to overlap with U.S. business hours.</p><h3><strong>Preferred Qualifications</strong></h3><p>● Experience with AWS, Azure, or Google Cloud P",
+    "projects": "<p>Softechassociate is a U.S.-based technology company seeking a talented and motivated Python Software Engineer to join our remote development team. In this role, you will be responsible for designing, developing, testing, and maintaining scalable and reliable software solutions using Python. You will collaborate with engineers and other team members across different locations, contribute to technical discussions, troubleshoot software issues, optimize application performance, and help deliver high-quality products. We are looking for someone with strong problem-solving skills, attention to detail, and a passion for software development and continuous learning.</p>",
+    "functions_headline": "Software Engineer",
+    "functions": "<p>We are looking for a full-time Python Software Engineer based in Latin America. The ideal candidate has strong Python</p><p>fundamentals, practical backend development experience, and the ability to write clean, maintainable, well-tested code.</p>",
+    "benefits_headline": "Work Arrangement",
+    "benefits": "<p>Employment type: Full-time</p><p>Location: Remote — candidates must be based in Latin America</p><p>Company: Softechassociate, a U.S.-based company</p><p>Compensation: Competitive and based on experience and location</p>",
+    "desirable_headline": "Key Responsibilities",
+    "desirable": "<h3><strong>Key Responsibilities</strong></h3><p>● Design, develop, test, and maintain backend applications and services using Python.</p><p>● Build and integrate RESTful APIs and work with databases such as PostgreSQL or MySQL.</p><p>● Write clean, reusable, efficient, and well-documented code.</p><p>● Troubleshoot issues, debug applications, and improve performance and reliability.</p><p>● Collaborate with product, engineering, and other team members on technical solutions.</p><p>● Participate in code reviews, testing, and continuous improvement of development practices.</p>",
+    "remote": true,
+    "remote_modality": "fully_remote",
+    "remote_zone": null,
+    "countries": [
+     "Remote"
+    ],
+    "lang": "en",
+    "category_name": "Programming",
+    "perks": [
+     "remote_full",
+     "flexible_hours"
+    ],
+    "min_salary": 3000,
+    "max_salary": 5000,
+    "published_at": 1794417003,
+    "response_time_in_days": {
+     "min": null,
+     "max": null
+    },
+    "applications_count": 339,
+    "location_regions": {
+     "data": []
+    },
+    "location_tenants": {
+     "data": []
+    },
+    "location_cities": {
+     "data": []
+    },
+    "modality": {
+     "data": {
+      "id": 1,
+      "type": "modality"
+     }
+    },
+    "seniority": {
+     "data": {
+      "id": 3,
+      "type": "seniority"
+     }
+    },
+    "tags": {
+     "data": [
+      {
+       "id": 18,
+       "type": "tag"
+      },
+      {
+       "id": 82,
+       "type": "tag"
+      },
+      {
+       "id": 149,
+       "type": "tag"
+      },
+      {
+       "id": 829,
+       "type": "tag"
+      },
+      {
+       "id": 53,
+       "type": "tag"
+      },
+      {
+       "id": 650,
+       "type": "tag"
+      },
+      {
+       "id": 39321,
+       "type": "tag"
+      },
+      {
+       "id": 37284,
+       "type": "tag"
+      }
+     ]
+    },
+    "company": {
+     "data": {
+      "id": "softtechassociate",
+      "type": "company",
+      "attributes": {
+       "name": "Softtechassociate",
+       "description": "Softechassociate is a U.S.-based company seeking a skilled Python Software Engineer to join our remote team. You will\r\nhelp design, build, and maintain reliable software solutions while collaborating with teammates across locations.",
+       "long_description": "",
+       "projects": null,
+       "benefits": "<p>Employment type: Full-time</p><p>Location: Remote — candidates must be based in Latin America</p><p>Company: Softechassociate, a U.S.-based company</p><p>Compensation: Competitive and based on experience and location</p>",
+       "web": "https://softechassociate.com/",
+       "twitter": null,
+       "github": null,
+       "facebook": null,
+       "angellist": null,
+       "country": "US",
+       "response_time_in_days": {
+        "min": null,
+        "max": null
+       },
+       "logo": "https://getonbrd-prod.s3.amazonaws.com/uploads/users/logo/21142/avatar.png"
+      }
+     }
+    }
+   },
+   "links": {
+    "public_url": "https://www.getonbrd.com/jobs/software-engineer-python-softtechassociate-remote"
+   }
+  },
+  {
+   "id": "web-app-full-stack-engineer-niuro-remote-03c6",
+   "type": "job",
+   "attributes": {
+    "title": "Web App Full-Stack Engineer",
+    "description_headline": "",
+    "description": "<p><strong>Requirements</strong></p><ul><li>Senior-level engineer with 5+ years of professional software development experience.</li><li>Proven experience developing and maintaining production web applications.</li><li>Strong backend development experience.</li><li>Hands-on experience developing AI features.</li><li>Practical experience working with large language models (LLMs).</li><li>Practical experience with computer vision.</li><li>C1 English level or higher.</li><li>Hands-on experience with production web application development, AI feature development, Web APIs, software architecture, testing, and deployment.</li></ul><p><strong>We value</strong> sound technical judgment, independent execution, and the ability to solve complex engineering problems while delivering measurable product",
+    "projects": "<p>Niuro is hiring for one specific, open position: a Senior Web App Full-Stack Engineer for a single client engagement. You will join the client's small product team, with direct access to the founders, and work on a live web application that is already running in production and actively evolving. The product combines a solid backend with AI-powered features (LLMs and computer vision). Your job is to own that application end to end: shipping new features, resolving bugs, and improving the product using performance data and user feedback. Niuro manages the hiring process and administrative support so you can focus on the work.</p>",
+    "functions_headline": "",
+    "functions": "<p>We are seeking a Senior Web App Full Stack Engineer to build and improve production web applications with a strong focus on backend systems and AI-powered capabilities. You will work across the stack, taking ownership of features from design and implementation through deployment and iteration.</p><ul><li>Design, implement, test, and maintain full stack web application features for production use.</li><li>Build backend services and APIs that support reliable, scalable application functionality.</li><li>Develop and integrate AI features using LLMs and computer vision techniques.</li><li>Own technical delivery from problem definition through implementation, deployment, monitoring, and iteration.</li><li>Investigate production issues, identify root causes, and implement durable fixes.</li><",
+    "benefits_headline": "",
+    "benefits": "<p>This is a full-time, 100% remote engagement. You will work directly with the client's small product team and founders on a live product, with real ownership of the application and the opportunity to make a measurable impact.</p><p>Upon successful completion of the initial contract, there is potential for long-term collaboration and stable, full-time employment, reflecting our long-term commitment to our team members.</p><p>Joining Niuro means becoming part of a global community dedicated to technological excellence and benefiting from strong administrative support infrastructure that enables you to focus on impactful work without distraction.</p>",
+    "desirable_headline": "",
+    "desirable": "<p><strong>Desirable (not required)</strong></p><ul><li>Experience with deploying and operating AI/ML-powered features in production (reliability, latency, and monitoring).</li><li>Track record of improving system performance using production metrics and experiments.</li><li>Experience collaborating with cross-functional stakeholders across design, implementation, and iteration.</li></ul>",
+    "remote": true,
+    "remote_modality": "remote_local",
+    "remote_zone": null,
+    "countries": [
+     "Remote"
+    ],
+    "lang": "en",
+    "category_name": "Programming",
+    "perks": [],
+    "min_salary": null,
+    "max_salary": null,
+    "published_at": 1794241811,
+    "response_time_in_days": {
+     "min": null,
+     "max": null
+    },
+    "applications_count": 142,
+    "location_regions": {
+     "data": [
+      {
+       "id": 9,
+       "type": "location_region"
+      },
+      {
+       "id": 6,
+       "type": "location_region"
+      }
+     ]
+    },
+    "location_tenants": {
+     "data": [
+      {
+       "id": 7,
+       "type": "location_tenant"
+      }
+     ]
+    },
+    "location_cities": {
+     "data": []
+    },
+    "modality": {
+     "data": {
+      "id": 1,
+      "type": "modality"
+     }
+    },
+    "seniority": {
+     "data": {
+      "id": 4,
+      "type": "seniority"
+     }
+    },
+    "tags": {
+     "data": [
+      {
+       "id": 225,
+       "type": "tag"
+      },
+      {
+       "id": 36857,
+       "type": "tag"
+      },
+      {
+       "id": 36862,
+       "type": "tag"
+      },
+      {
+       "id": 262,
+       "type": "tag"
+      },
+      {
+       "id": 36775,
+       "type": "tag"
+      },
+      {
+       "id": 36875,
+       "type": "tag"
+      },
+      {
+       "id": 36838,
+       "type": "tag"
+      },
+      {
+       "id": 37284,
+       "type": "tag"
+      }
+     ]
+    },
+    "company": {
+     "data": {
+      "id": "niuro",
+      "type": "company",
+      "attributes": {
+       "name": "Niuro",
+       "description": "Niuro connects projects with elite tech teams, collaborating with leading U.S. companies. Our mission is to simplify global talent acquisition through innovative solutions that maximize efficiency and quality.",
+       "long_description": "<p>Niuro empowers projects by providing autonomous, high-performance tech teams, specialized in partnering with top-tier U.S. companies. We offer continuous professional growth opportunities, training in technical and soft skills, and leadership development to ensure success in innovative and challenging projects. Additionally, we handle all administrative tasks, including hiring, payments, and training, allowing our teams to focus on delivering exceptional results. Our priority is to foster a collaborative environment where talent can grow and reach its full potential.</p>",
+       "projects": "<p>Niuro connects projects with elite tech teams and partners with top-tier U.S. companies. We specialize in providing autonomous, high-performance engineering teams and managing all administrative tasks so engineers can focus on delivering impactful results. Our mission is to simplify global talent acquisition through innovative solutions that maximize efficiency and quality, while offering continuous professional growth, technical and soft skills training, and leadership development. This role sits in a 100% remote, globally distributed environment, with opportunities to work on challenging industrial data projects and contribute to long-term collaborations with major U.S. clients.</p>",
+       "benefits": "<p>We provide the opportunity to participate in impactful and technically rigorous industrial data projects that drive innovation and professional growth. Our work environment emphasizes technical excellence, collaboration, and continuous innovation.</p><p>Niuro supports a 100% remote work model, allowing flexibility in work location globally. We invest in career development through ongoing training programs and leadership opportunities, ensuring continuous growth and success.</p><p>Upon successful completion of the initial contract, there is potential for long-term collaboration and stable, full-time employment, reflecting our long-term commitment to our team members.</p><p>Joining Niuro means becoming part of a global community dedicated to technological excellence and benefiting from a ",
+       "web": "https://niuro.io/",
+       "twitter": "",
+       "github": "",
+       "facebook": "",
+       "angellist": "",
+       "country": "CL",
+       "response_time_in_days": {
+        "min": 4,
+        "max": 16
+       },
+       "logo": "https://getonbrd-prod.s3.amazonaws.com/uploads/users/logo/16033/logoHD.png"
+      }
+     }
+    }
+   },
+   "links": {
+    "public_url": "https://www.getonbrd.com/jobs/web-app-full-stack-engineer-niuro-remote-03c6"
+   }
+  },
+  {
+   "id": "semi-senior-full-stack-java-developer-qa-ai-bilingue-23people-santiago",
+   "type": "job",
+   "attributes": {
+    "title": "Semi Senior Full-Stack Java Developer (QA & AI) Bilingüe",
+    "description_headline": "Skills excluyentes",
+    "description": "<ul><li>Experiencia comprobable con Java y Spring Boot en proyectos reales.</li><li>Experiencia práctica trabajando con Angular.</li><li>Capacidad para realizar pruebas unitarias, de integración y de API en aplicaciones Java.</li><li>Uso diario de asistentes de programación basados en IA, como GitHub Copilot o similar.</li><li>Inglés fluido (Nivel B2+): Nivel suficiente para trabajar y comunicarse directamente con el equipo.</li></ul>",
+    "projects": "<div>Equifax es mucho más que una empresa de informes; es una compañía global líder en datos, analítica y tecnología con presencia en 24 países. En Chile, operan desde 1979 entregando soluciones críticas de ciberseguridad, identidad y riesgo a más de 14.000 empresas.</div><div>El Hub Tecnológico (SDC) Lo que hace única a esta oportunidad es que Chile alberga el Santiago Development Center (SDC). Este centro lidera la transformación digital de Equifax a nivel mundial, concentrando cerca del 60% de sus desarrollos tecnológicos globales.</div><div>Cultura y Visión Equifax promueve un entorno de colaboración y excelencia técnica, donde el talento local tiene el desafío de crear soluciones de impacto mundial. Su visión es clara: usar la data y la tecnología para potenciar la toma de decisiones ",
+    "functions_headline": "Funciones del cargo",
+    "functions": "<p>El Semi Senior Full Stack Developer se integrará al equipo \"Credit Health\", participando en todo el ciclo de vida del desarrollo, desde el diseño hasta la puesta en producción. Construirá soluciones end-to-end utilizando Java, Spring Boot y Angular, apoyándose en IA y siendo guiado por su líder. Automatizará pruebas para asegurar la calidad de cada entrega y colaborará diariamente con el equipo en inglés fluido.</p>",
+    "benefits_headline": "Beneficios",
+    "benefits": "<ul><li><strong>Seguro complementario</strong>: Seguro de salud, vida y dental, para que estés protegido.</li><li><strong>Curso de inglés</strong>: En nuestro programa de formación en el idioma, ofrecemos dos modalidades para adaptarnos a tus necesidades y objetivos, con profesores nativos.</li><li><strong>Reembolso de certificaciones internacionales</strong>: Apoyamos el crecimiento profesional, por lo que te reembolsamos el costo de un examen de certificación internacional que quieras realizar.</li><li><strong>Bono de vacaciones</strong>: Recibe una compensación económica por cada semana de vacaciones que tomes. </li><li><strong>Aguinaldos en fiestas patrias y Navidad</strong>: Un bono en septiembre y en diciembre, para que la pases bien con tu familia. </li><li><strong>Día libre de cump",
+    "desirable_headline": "Skills deseables",
+    "desirable": "<ul><li>Automatización de pruebas de interfaz de usuario (UI) con Playwright, Selenium o Cypress.</li><li>Experiencia ejecutando pruebas de regresión y pruebas de humo (\"smoke testing\").</li><li>Experiencia aportando valor de principio a fin (end-to-end) mediante el uso de IA en áreas Dev, QE y SRE.</li><li>Experiencia en metodologías SRE y creación de frameworks de pruebas desde cero.</li></ul><p><strong>¿Qué ofrecemos?</strong></p><p><strong>Rango salarial: $2.800.000 - $3.000.000 CLP líquidos.</strong></p><p><strong>Modalidad: Híbrido (3 días en la oficina y 2 días de Home Office).</strong></p><p><strong>Horario: 09:00 a 18:00 hrs (Horario Canadá).</strong></p><p><strong>Contrato: Proyecto inicial de 8 meses, con posible extensión.</strong></p>",
+    "remote": false,
+    "remote_modality": "hybrid",
+    "remote_zone": null,
+    "countries": [
+     "Chile"
+    ],
+    "lang": "lang_not_specified",
+    "category_name": "Programming",
+    "perks": [],
+    "min_salary": 2800,
+    "max_salary": 3000,
+    "published_at": 1795003849,
+    "response_time_in_days": {
+     "min": null,
+     "max": null
+    },
+    "applications_count": 92,
+    "location_regions": {
+     "data": []
+    },
+    "location_tenants": {
+     "data": []
+    },
+    "location_cities": {
+     "data": [
+      {
+       "id": 1,
+       "type": "location_city"
+      }
+     ]
+    },
+    "modality": {
+     "data": {
+      "id": 1,
+      "type": "modality"
+     }
+    },
+    "seniority": {
+     "data": {
+      "id": 3,
+      "type": "seniority"
+     }
+    },
+    "tags": {
+     "data": [
+      {
+       "id": 2,
+       "type": "tag"
+      },
+      {
+       "id": 587,
+       "type": "tag"
+      },
+      {
+       "id": 104,
+       "type": "tag"
+      },
+      {
+       "id": 888,
+       "type": "tag"
+      },
+      {
+       "id": 863,
+       "type": "tag"
+      },
+      {
+       "id": 2754,
+       "type": "tag"
+      },
+      {
+       "id": 1589,
+       "type": "tag"
+      },
+      {
+       "id": 8508,
+       "type": "tag"
+      }
+     ]
+    },
+    "company": {
+     "data": {
+      "id": "23people-cl",
+      "type": "company",
+      "attributes": {
+       "name": "23people",
+       "description": "Básicamente, somos un grupo de geeks apasionados por lo que hacemos: programar y resolver problemas usando tecnología. 🤟",
+       "long_description": "<div><strong> En 23people ayudamos a nuestros clientes a digitalizar sus servicios, siempre con las personas en el centro. <br></strong><br></div><div>¿<strong>Cómo lo hacemos?<br></strong><br></div><ul><li><strong>Trabajo sustentable: </strong>cuidamos cómo trabajamos y a quienes lo hacen con nosotros y sí, incluso si es en modalidad <em>outsourcing. </em></li><li><strong>Agilidad de verdad: </strong>nos adaptamos rápido, entregamos valor desde el día uno y mejoramos tooodo el tiempo. </li><li><strong>Tecnología con criterio: </strong>la usamos de forma eficiente y creativa, y eso nos empuja a seguir creciendo profesionalmente. </li></ul><div>💜 ¡<strong>Nos encanta lo que hacemos!<br></strong><br></div><p>Somos especialistas JavaScript Fullstack en general. Creemos que DevOps es una form",
+       "projects": "<div>Equifax es mucho más que una empresa de informes; es una compañía global líder en datos, analítica y tecnología con presencia en 24 países. En Chile, operan desde 1979 entregando soluciones críticas de ciberseguridad, identidad y riesgo a más de 14.000 empresas.</div><div>El Hub Tecnológico (SDC) Lo que hace única a esta oportunidad es que Chile alberga el Santiago Development Center (SDC). Este centro lidera la transformación digital de Equifax a nivel mundial, concentrando cerca del 60% de sus desarrollos tecnológicos globales.</div><div>Cultura y Visión Equifax promueve un entorno de colaboración y excelencia técnica, donde el talento local tiene el desafío de crear soluciones de impacto mundial. Su visión es clara: usar la data y la tecnología para potenciar la toma de decisiones ",
+       "benefits": "<ul><li><strong>Seguro complementario</strong>: Seguro de salud, vida y dental, para que estés protegido.</li><li><strong>Curso de inglés</strong>: En nuestro programa de formación en el idioma, ofrecemos dos modalidades para adaptarnos a tus necesidades y objetivos, con profesores nativos.</li><li><strong>Reembolso de certificaciones internacionales</strong>: Apoyamos el crecimiento profesional, por lo que te reembolsamos el costo de un examen de certificación internacional que quieras realizar.</li><li><strong>Bono de vacaciones</strong>:&nbsp; Recibe una compensación económica por cada semana de vacaciones que tomes.&nbsp;</li><li><strong>Aguinaldos en fiestas patrias y Navidad</strong>:&nbsp; Un bono en septiembre y en diciembre, para que la pases bien con tu familia.&nbsp;</li><li><st",
+       "web": "https://www.23people.io",
+       "twitter": "",
+       "github": "",
+       "facebook": "23people",
+       "angellist": "",
+       "country": "CL",
+       "response_time_in_days": {
+        "min": 0,
+        "max": 12
+       },
+       "logo": "https://getonbrd-prod.s3.amazonaws.com/uploads/users/logo/4457/Foto_perfil_Tiktok.png"
+      }
+     }
+    }
+   },
+   "links": {
+    "public_url": "https://www.getonbrd.com/jobs/semi-senior-full-stack-java-developer-qa-ai-bilingue-23people-santiago"
+   }
+  }
+ ],
+ "meta": {
+  "page": 1,
+  "per_page": 4,
+  "total_pages": 2
+ }
+}
