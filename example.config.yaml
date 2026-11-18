@@ -115,3 +115,39 @@ crawlers:
     enabled: true
     search_terms: ["golang", "go", "backend", "remote", "software engineer"]
     max_pages: 1 # ignorado — usa os primeiros 200 comentários do thread mensal
+
+  # --- ATS de startups ---------------------------------------------------
+  # ATS não têm busca global: cada crawler consulta uma empresa por vez (até
+  # 5 em paralelo) e filtra as vagas pelo título com os search_terms.
+  # Evite termos curtos como "go", que casam com qualquer título ("Google").
+  # Para adicionar uma empresa, confira antes se a API responde com vagas
+  # (o comando de cada ATS está no comentário dele) e use o mesmo slug da URL
+  # pública da board.
+  - name: ashby
+    enabled: true
+    search_terms: ["golang", "backend", "back-end", "software engineer", "platform engineer", "infrastructure"]
+    max_pages: 1 # ignorado — uma request por empresa, sem paginação
+    # Verificar: curl "https://api.ashbyhq.com/posting-api/job-board/{slug}"
+    # Slug = jobs.ashbyhq.com/{slug}. 404 = empresa não usa Ashby.
+    # Verificadas com vagas abertas em nov/2026.
+    companies:
+      - linear
+      - ramp
+      - supabase
+      - posthog
+      - openai
+      - replit
+      - cursor
+      - perplexity
+      - zapier
+      - modal
+      - langchain
+      - airbyte
+      - elevenlabs
+      - resend
+      - n8n
+      - docker
+      - sentry
+      - warp
+      - temporal
+      - railway
