@@ -118,6 +118,7 @@ func buildCrawlerEntries(crawlers []config.Crawler, db *storage.DB) []crawler.En
 		"lever":          func(c config.Crawler) crawler.Crawler { return crawler.NewLeverCrawler(c.Companies, c.SearchTerms) },
 		"hackernews":     func(c config.Crawler) crawler.Crawler { return crawler.NewHackerNewsCrawler(db, c.SearchTerms) },
 		"ashby":          func(c config.Crawler) crawler.Crawler { return crawler.NewAshbyCrawler(c.Companies, c.SearchTerms) },
+		"greenhouse":     func(c config.Crawler) crawler.Crawler { return crawler.NewGreenhouseCrawler(c.Companies, c.SearchTerms) },
 		// TODO: Wellfound (ex-AngelList) — não implementado: o site fica atrás
 		// de Cloudflare pesado e não tem API pública.
 	}

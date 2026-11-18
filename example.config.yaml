@@ -151,3 +151,29 @@ crawlers:
       - warp
       - temporal
       - railway
+  - name: greenhouse
+    enabled: true
+    search_terms: ["golang", "backend", "back-end", "software engineer", "platform engineer", "infrastructure"]
+    max_pages: 1 # ignorado — uma request por empresa, sem paginação
+    # Verificar: curl "https://boards-api.greenhouse.io/v1/boards/{slug}/jobs"
+    # Slug = boards.greenhouse.io/{slug} (ou job-boards.greenhouse.io/{slug}).
+    # Verificadas com vagas abertas em nov/2026.
+    companies:
+      - vercel
+      - gitlab
+      - stripe
+      - cloudflare
+      - datadog
+      - figma
+      - mongodb
+      - grafanalabs
+      - elastic
+      - coinbase
+      - twilio
+      - canonical
+      - chainguard
+      - tailscale
+      - fivetran
+      - cockroachlabs
+      - planetscale
+      - pagerduty

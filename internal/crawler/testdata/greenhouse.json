@@ -1,0 +1,284 @@
+{
+ "jobs": [
+  {
+   "absolute_url": "https://job-boards.greenhouse.io/vercel/jobs/6111332004",
+   "data_compliance": [
+    {
+     "type": "gdpr",
+     "requires_consent": false,
+     "requires_processing_consent": false,
+     "requires_retention_consent": false,
+     "retention_period": null,
+     "demographic_data_consent_applies": false
+    }
+   ],
+   "internal_job_id": 4878061004,
+   "location": {
+    "name": "Hybrid - San Francisco, New York City, London"
+   },
+   "metadata": [
+    {
+     "id": 18783104004,
+     "name": "Career Site Categories",
+     "value": "Security & IT",
+     "value_type": "single_select"
+    }
+   ],
+   "id": 6111332004,
+   "updated_at": "2026-10-30T14:45:41-04:00",
+   "requisition_id": "765",
+   "title": "Security Software Engineer, Detection & Response",
+   "company_name": "Vercel",
+   "first_published": "2026-07-08T02:03:13-04:00",
+   "language": "en",
+   "application_deadline": null,
+   "content": "&lt;div class=&quot;content-intro&quot;&gt;&lt;h2&gt;About Vercel:&lt;/h2&gt;\n&lt;p&gt;&lt;span data-sheets-root=&quot;1&quot;&gt;Vercel is the agentic infrastructure company, freeing people and agents to ship what&#39;s next. For more than a decade we&#39;ve helped builders move from idea to production with speed, security, and exceptional developer experience.&lt;/span&gt;&lt;/p&gt;\n&lt;p&gt;&lt;span data-sheets-root=&quot;1&quot;&gt;Now we&#39;re scaling our products for both agents and people to ship and run software, built in the open and trusted by OpenAI, PayPal, Ramp, Supreme, and millions of developers worldwide.&lt;/span&gt;&lt;/p&gt;&lt;/div&gt;&lt;h2&gt;&lt;strong&gt;About the role&lt;/strong&gt;&lt;/h2&gt;\n&lt;p&gt;We are looking for a Security Software Engineer, Detection &amp;amp; Response, to build the telemetry, logging, and response systems for our Detection &amp;amp; Response team. This is a builder role, not a queue-triage role. You will build detection and response as software across a multi-cloud fleet of servers, containers, and endpoints, and test where AI and agents can safely take work off responders. This is a hybrid role based in San Francisco, New York ",
+   "departments": [
+    {
+     "id": 4086320004,
+     "name": "Security R&D",
+     "child_ids": [],
+     "parent_id": null
+    }
+   ],
+   "offices": [
+    {
+     "id": 4035428004,
+     "name": "Remote - United States",
+     "location": "San Francisco, California, United States",
+     "child_ids": [],
+     "parent_id": 4014159004
+    }
+   ],
+   "ai_disclaimer": null,
+   "include_ai_disclaimer": null,
+   "ai_opt_out_request_url": "http://app4.greenhouse.io/ai_opt_out_request/job_post/6111332004/ai_opt_out"
+  },
+  {
+   "absolute_url": "https://job-boards.greenhouse.io/vercel/jobs/6093255004",
+   "data_compliance": [
+    {
+     "type": "gdpr",
+     "requires_consent": false,
+     "requires_processing_consent": false,
+     "requires_retention_consent": false,
+     "retention_period": null,
+     "demographic_data_consent_applies": false
+    }
+   ],
+   "internal_job_id": 5175156004,
+   "location": {
+    "name": "Hybrid - San Francisco, New York City"
+   },
+   "metadata": [
+    {
+     "id": 18783104004,
+     "name": "Career Site Categories",
+     "value": "Security & IT",
+     "value_type": "single_select"
+    }
+   ],
+   "id": 6093255004,
+   "updated_at": "2026-10-30T14:45:41-04:00",
+   "requisition_id": "1259",
+   "title": "Security Software Engineer, IAM",
+   "company_name": "Vercel",
+   "first_published": "2026-06-24T20:19:22-04:00",
+   "language": "en",
+   "application_deadline": null,
+   "content": "&lt;div class=&quot;content-intro&quot;&gt;&lt;h2&gt;About Vercel:&lt;/h2&gt;\n&lt;p&gt;&lt;span data-sheets-root=&quot;1&quot;&gt;Vercel is the agentic infrastructure company, freeing people and agents to ship what&#39;s next. For more than a decade we&#39;ve helped builders move from idea to production with speed, security, and exceptional developer experience.&lt;/span&gt;&lt;/p&gt;\n&lt;p&gt;&lt;span data-sheets-root=&quot;1&quot;&gt;Now we&#39;re scaling our products for both agents and people to ship and run software, built in the open and trusted by OpenAI, PayPal, Ramp, Supreme, and millions of developers worldwide.&lt;/span&gt;&lt;/p&gt;&lt;/div&gt;&lt;h2&gt;&lt;strong&gt;About the role&lt;/strong&gt;&lt;/h2&gt;\n&lt;p&gt;We are looking for a Security Software Engineer, IAM, to build identity and access management (IAM) infrastructure as software, not administer identity products, and this role suits a software engineer who has gone deep on identity or an IAM engineer with a strong engineering background. You will own identity and IAM end to end, replacing the approval queue with access that is self-serve, time-bound, and provable, built so identity is defined as code, review",
+   "departments": [
+    {
+     "id": 4086320004,
+     "name": "Security R&D",
+     "child_ids": [],
+     "parent_id": null
+    }
+   ],
+   "offices": [
+    {
+     "id": 4091065004,
+     "name": "Office - San Francisco",
+     "location": "San Francisco, California, United States",
+     "child_ids": [],
+     "parent_id": 4014159004
+    }
+   ],
+   "ai_disclaimer": null,
+   "include_ai_disclaimer": null,
+   "ai_opt_out_request_url": "http://app4.greenhouse.io/ai_opt_out_request/job_post/6093255004/ai_opt_out"
+  },
+  {
+   "absolute_url": "https://job-boards.greenhouse.io/vercel/jobs/6242246004",
+   "data_compliance": [
+    {
+     "type": "gdpr",
+     "requires_consent": false,
+     "requires_processing_consent": false,
+     "requires_retention_consent": false,
+     "retention_period": null,
+     "demographic_data_consent_applies": false
+    }
+   ],
+   "internal_job_id": 5216252004,
+   "location": {
+    "name": "Hybrid - San Francisco"
+   },
+   "metadata": [
+    {
+     "id": 18783104004,
+     "name": "Career Site Categories",
+     "value": "Engineering",
+     "value_type": "single_select"
+    }
+   ],
+   "id": 6242246004,
+   "updated_at": "2026-11-04T18:23:38-05:00",
+   "requisition_id": "1356",
+   "title": "Software Engineer, Agent Auth",
+   "company_name": "Vercel",
+   "first_published": "2026-11-03T11:31:46-05:00",
+   "language": "en",
+   "application_deadline": null,
+   "content": "&lt;div class=&quot;content-intro&quot;&gt;&lt;h2&gt;About Vercel:&lt;/h2&gt;\n&lt;p&gt;&lt;span data-sheets-root=&quot;1&quot;&gt;Vercel is the agentic infrastructure company, freeing people and agents to ship what&#39;s next. For more than a decade we&#39;ve helped builders move from idea to production with speed, security, and exceptional developer experience.&lt;/span&gt;&lt;/p&gt;\n&lt;p&gt;&lt;span data-sheets-root=&quot;1&quot;&gt;Now we&#39;re scaling our products for both agents and people to ship and run software, built in the open and trusted by OpenAI, PayPal, Ramp, Supreme, and millions of developers worldwide.&lt;/span&gt;&lt;/p&gt;&lt;/div&gt;&lt;h2&gt;About the role:&lt;/h2&gt;\n&lt;p&gt;Agents are becoming first-class users of the internet. They sign in, call APIs, deploy code, and act on behalf of people and teams. That raises questions the web was never designed to answer: Who is this agent? Who does it work for? What is it allowed to do, for how long, and how do we know?&lt;/p&gt;\n&lt;p&gt;As an engineer on the&amp;nbsp;Agent Auth and Identity&amp;nbsp;team, you&#39;ll help answer those questions. You&#39;ll build the systems that let agents and people authenticate",
+   "departments": [
+    {
+     "id": 4042495004,
+     "name": "Engineering",
+     "child_ids": [],
+     "parent_id": null
+    }
+   ],
+   "offices": [
+    {
+     "id": 4091066004,
+     "name": "Office - New York City",
+     "location": "New York, New York, United States",
+     "child_ids": [],
+     "parent_id": 4014159004
+    },
+    {
+     "id": 4091065004,
+     "name": "Office - San Francisco",
+     "location": "San Francisco, California, United States",
+     "child_ids": [],
+     "parent_id": 4014159004
+    }
+   ],
+   "ai_disclaimer": null,
+   "include_ai_disclaimer": null,
+   "ai_opt_out_request_url": "http://app4.greenhouse.io/ai_opt_out_request/job_post/6242246004/ai_opt_out"
+  },
+  {
+   "absolute_url": "https://job-boards.greenhouse.io/vercel/jobs/6231864004",
+   "data_compliance": [
+    {
+     "type": "gdpr",
+     "requires_consent": false,
+     "requires_processing_consent": false,
+     "requires_retention_consent": false,
+     "retention_period": null,
+     "demographic_data_consent_applies": true
+    }
+   ],
+   "internal_job_id": 5231382004,
+   "location": {
+    "name": "Remote - Germany"
+   },
+   "metadata": [
+    {
+     "id": 18783104004,
+     "name": "Career Site Categories",
+     "value": "Sales",
+     "value_type": "single_select"
+    }
+   ],
+   "id": 6231864004,
+   "updated_at": "2026-11-16T10:51:27-05:00",
+   "requisition_id": "R-00010",
+   "title": "Account Executive, Commercial",
+   "company_name": "Vercel",
+   "first_published": "2026-10-22T11:22:01-04:00",
+   "language": "en",
+   "application_deadline": null,
+   "content": "&lt;div class=&quot;content-intro&quot;&gt;&lt;h2&gt;About Vercel:&lt;/h2&gt;\n&lt;p&gt;&lt;span data-sheets-root=&quot;1&quot;&gt;Vercel is the agentic infrastructure company, freeing people and agents to ship what&#39;s next. For more than a decade we&#39;ve helped builders move from idea to production with speed, security, and exceptional developer experience.&lt;/span&gt;&lt;/p&gt;\n&lt;p&gt;&lt;span data-sheets-root=&quot;1&quot;&gt;Now we&#39;re scaling our products for both agents and people to ship and run software, built in the open and trusted by OpenAI, PayPal, Ramp, Supreme, and millions of developers worldwide.&lt;/span&gt;&lt;/p&gt;&lt;/div&gt;&lt;div&gt;\n&lt;h2&gt;About the role&lt;/h2&gt;\n&lt;p&gt;As an Account Executive, Commercial, you’ll win net-new logos by selling Vercel’s frontend cloud to developers and engineering leaders at digital-native companies at the leading edge of modern web and AI, tying it to outcomes such as speed, conversion, productivity, and reliability. You’ll run full-cycle deals alongside Solutions Architects, Marketing, Product, and Customer Success, helping teams adopt Vercel and expand as they scale, and help shape how Vercel goes to market",
+   "departments": [
+    {
+     "id": 4085775004,
+     "name": "Account Executive",
+     "child_ids": [],
+     "parent_id": null
+    }
+   ],
+   "offices": [
+    {
+     "id": 4035415004,
+     "name": "Remote - Germany",
+     "location": "Berlin, Berlin, Germany",
+     "child_ids": [],
+     "parent_id": 4014161004
+    }
+   ],
+   "ai_disclaimer": null,
+   "include_ai_disclaimer": null,
+   "ai_opt_out_request_url": "http://app4.greenhouse.io/ai_opt_out_request/job_post/6231864004/ai_opt_out"
+  },
+  {
+   "absolute_url": "https://job-boards.greenhouse.io/vercel/jobs/5999792004",
+   "data_compliance": [
+    {
+     "type": "gdpr",
+     "requires_consent": false,
+     "requires_processing_consent": false,
+     "requires_retention_consent": false,
+     "retention_period": null,
+     "demographic_data_consent_applies": true
+    }
+   ],
+   "internal_job_id": 5156316004,
+   "location": {
+    "name": "Hybrid - London"
+   },
+   "metadata": [
+    {
+     "id": 18783104004,
+     "name": "Career Site Categories",
+     "value": "Sales",
+     "value_type": "single_select"
+    }
+   ],
+   "id": 5999792004,
+   "updated_at": "2026-11-16T11:12:32-05:00",
+   "requisition_id": "1240",
+   "title": "Account Executive, Majors",
+   "company_name": "Vercel",
+   "first_published": "2026-05-21T09:26:09-04:00",
+   "language": "en",
+   "application_deadline": null,
+   "content": "&lt;div class=&quot;content-intro&quot;&gt;&lt;h2&gt;About Vercel:&lt;/h2&gt;\n&lt;p&gt;&lt;span data-sheets-root=&quot;1&quot;&gt;Vercel is the agentic infrastructure company, freeing people and agents to ship what&#39;s next. For more than a decade we&#39;ve helped builders move from idea to production with speed, security, and exceptional developer experience.&lt;/span&gt;&lt;/p&gt;\n&lt;p&gt;&lt;span data-sheets-root=&quot;1&quot;&gt;Now we&#39;re scaling our products for both agents and people to ship and run software, built in the open and trusted by OpenAI, PayPal, Ramp, Supreme, and millions of developers worldwide.&lt;/span&gt;&lt;/p&gt;&lt;/div&gt;&lt;h4&gt;About the role&lt;/h4&gt;\n&lt;p&gt;As an Enterprise Account Executive, you’ll own a curated book of named enterprise accounts across key EMEA markets and be the primary driver of net-new revenue and platform expansion. You’ll bring Vercel’s platform into some of the region’s most digitally ambitious companies, working alongside Solutions Engineers, a Partner Manager, and cross-functional teams at Vercel. This is a hybrid role with 3 in-office days per week in London.&lt;/p&gt;\n&lt;h4&gt;What you’ll do&lt;/h4&gt;\n&lt;ul&g",
+   "departments": [
+    {
+     "id": 4085775004,
+     "name": "Account Executive",
+     "child_ids": [],
+     "parent_id": null
+    }
+   ],
+   "offices": [
+    {
+     "id": 4091069004,
+     "name": "Office - London",
+     "location": "London, England, United Kingdom",
+     "child_ids": [],
+     "parent_id": 4014161004
+    }
+   ],
+   "ai_disclaimer": null,
+   "include_ai_disclaimer": null,
+   "ai_opt_out_request_url": "http://app4.greenhouse.io/ai_opt_out_request/job_post/5999792004/ai_opt_out"
+  }
+ ],
+ "meta": {
+  "total": 5
+ }
+}
