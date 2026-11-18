@@ -177,6 +177,18 @@ crawlers:
       - cockroachlabs
       - planetscale
       - pagerduty
+  - name: workable
+    enabled: true
+    search_terms: ["golang", "backend", "back-end", "software engineer", "platform engineer", "infrastructure"]
+    max_pages: 1 # ignorado — uma request por empresa, sem paginação
+    # Verificar: curl "https://apply.workable.com/api/v1/widget/accounts/{slug}"
+    # Slug = apply.workable.com/{slug}. Atenção: o widget só lista vagas de
+    # empresas que o deixam habilitado — "jobs": [] não garante que a
+    # empresa esteja sem vagas. Das ~50 testadas em nov/2026, só estas
+    # responderam com vagas.
+    companies:
+      - blueground
+      - skroutz
 
   # --- Boards remotos com API JSON pública -------------------------------
   - name: himalayas
