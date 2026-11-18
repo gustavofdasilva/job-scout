@@ -189,6 +189,21 @@ crawlers:
     companies:
       - blueground
       - skroutz
+  - name: smartrecruiters
+    enabled: true
+    search_terms: ["golang", "backend", "back-end", "software engineer", "platform engineer", "infrastructure"]
+    max_pages: 3 # páginas de 100 vagas por empresa
+    # Verificar: curl "https://api.smartrecruiters.com/v1/companies/{id}/postings"
+    # O id é o da URL pública jobs.smartrecruiters.com/{id} e diferencia
+    # maiúsculas (ex: "Wix2"). "totalFound": 0 = id errado ou sem vagas.
+    # Verificadas com vagas abertas em nov/2026.
+    companies:
+      - ServiceNow
+      - Wix2
+      - Ubisoft2
+      - Canva
+      - Experian
+      - Endava
 
   # --- Boards remotos com API JSON pública -------------------------------
   - name: himalayas
@@ -223,5 +238,5 @@ crawlers:
     # Lê ycombinator.com/jobs/role/software-engineer/remote (JSON embutido
     # na página) e filtra título/tipo/skills pelos termos. Busca a página
     # de detalhe de cada vaga filtrada (até 40) pra pegar a descrição.
-    search_terms: ["backend", "golang", "go,", "node.js", "full stack", "infrastructure"]
+    search_terms: ["backend", "golang", "node.js", "full stack", "infrastructure"]
     max_pages: 1 # ignorado

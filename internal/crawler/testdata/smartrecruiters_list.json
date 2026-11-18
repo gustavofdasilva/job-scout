@@ -1,0 +1,825 @@
+{
+ "offset": 0,
+ "limit": 100,
+ "totalFound": 5,
+ "content": [
+  {
+   "id": "744000161753345",
+   "name": "xEngineer (Backend Core)",
+   "uuid": "ee41159b-2544-4bd6-9d95-0772e2732ac6",
+   "jobAdId": "8cce0502-4f5f-421e-b400-44ec39ffb9a2",
+   "defaultJobAd": false,
+   "refNumber": "oracle-009561ae-4b8b-5427-96f7-c4e5ae3ff7f8-T1787234583",
+   "company": {
+    "identifier": "Wix2",
+    "name": "Wix"
+   },
+   "releasedDate": "2026-11-16T09:20:05.818Z",
+   "location": {
+    "city": "Kyiv",
+    "country": "ua",
+    "remote": false,
+    "hybrid": true,
+    "fullLocation": "Kyiv, , Ukraine"
+   },
+   "industry": {
+    "id": "internet",
+    "label": "Internet"
+   },
+   "department": {},
+   "function": {
+    "id": "other",
+    "label": "Other"
+   },
+   "typeOfEmployment": {
+    "id": "permanent",
+    "label": "Full-time"
+   },
+   "experienceLevel": {
+    "id": "mid_senior_level",
+    "label": "Mid-Senior Level"
+   },
+   "customField": [
+    {
+     "fieldId": "6437bd8e8ea74a72671fc0be",
+     "fieldLabel": "Shifts",
+     "valueId": "ec54d13f-eae2-4088-92cf-abe3f84a5b92",
+     "valueLabel": "No"
+    },
+    {
+     "fieldId": "6437b9e5c9f4d66fc814ca64",
+     "fieldLabel": "Seniority",
+     "valueId": "38519084-1bea-4066-8354-f29e2c38f930",
+     "valueLabel": "Mid-Senior"
+    },
+    {
+     "fieldId": "6437b82c8ea74a72671fc0bd",
+     "fieldLabel": "Guild",
+     "valueId": "300000004457099",
+     "valueLabel": "R&D"
+    },
+    {
+     "fieldId": "6437be5bc9f4d66fc814ca66",
+     "fieldLabel": "Child / Parent",
+     "valueId": "8ae13d47-2afa-44bf-9dda-0736fe53b4b5",
+     "valueLabel": "Child"
+    },
+    {
+     "fieldId": "6437b45199ea7f358c21d565",
+     "fieldLabel": "Site",
+     "valueId": "300000004407178",
+     "valueLabel": "Kyiv"
+    },
+    {
+     "fieldId": "6432abd34d9f434bdb15aaf0",
+     "fieldLabel": "Brands",
+     "valueId": "default",
+     "valueLabel": "Wix"
+    },
+    {
+     "fieldId": "6437bd6bbb340d0b0a89a889",
+     "fieldLabel": "Student/Intern",
+     "valueId": "8339fec2-bc5c-4c74-b40e-e8b9d930c78b",
+     "valueLabel": "No"
+    },
+    {
+     "fieldId": "6437bd30c9f4d66fc814ca65",
+     "fieldLabel": "Temp",
+     "valueId": "b24ee80e-cb83-4cee-9400-f703ed3e17ef",
+     "valueLabel": "N"
+    },
+    {
+     "fieldId": "6437b9a2dc27cf10eb3e8148",
+     "fieldLabel": "Profession",
+     "valueId": "300000004407424",
+     "valueLabel": "Architecture"
+    },
+    {
+     "fieldId": "COUNTRY",
+     "fieldLabel": "Country/Region",
+     "valueId": "ua",
+     "valueLabel": "Ukraine"
+    },
+    {
+     "fieldId": "6437b865d8fff567fd5ae319",
+     "fieldLabel": "Sub-Guild",
+     "valueId": "300002160673243",
+     "valueLabel": "R&D\\xEngineering"
+    },
+    {
+     "fieldId": "6437b41f07c43310e8c5d112",
+     "fieldLabel": "City",
+     "valueId": "200000000000191",
+     "valueLabel": "Kyiv"
+    },
+    {
+     "fieldId": "6437b88a1d810c4bc5ad4cc9",
+     "fieldLabel": "Department/Company",
+     "valueId": "300000019021302",
+     "valueLabel": "Payments"
+    },
+    {
+     "fieldId": "6437b40dbb340d0b0a89a887",
+     "fieldLabel": "Wix Country",
+     "valueId": "100000009634479",
+     "valueLabel": "Ukraine"
+    },
+    {
+     "fieldId": "6437bfeb1d810c4bc5ad4cca",
+     "fieldLabel": "Internal/External",
+     "valueId": "902c72ad-6d44-42f9-897a-c6bae6dbc78e",
+     "valueLabel": "Both"
+    },
+    {
+     "fieldId": "6437bd0199ea7f358c21d566",
+     "fieldLabel": "Full Part Time",
+     "valueId": "c5cf41be-3ee1-40ff-ba3e-39a6b4454032",
+     "valueLabel": "Full time"
+    },
+    {
+     "fieldId": "6437be3307c43310e8c5d113",
+     "fieldLabel": "Priority Level",
+     "valueId": "90563a9f-1c3d-4a0f-b5e1-407dabb89ced",
+     "valueLabel": "Focus"
+    }
+   ],
+   "visibility": "PUBLIC",
+   "ref": "https://api.smartrecruiters.com/v1/companies/Wix2/postings/744000161753345",
+   "language": {
+    "code": "en",
+    "label": "English",
+    "labelNative": "English (US)"
+   }
+  },
+  {
+   "id": "744000160612109",
+   "name": "xEngineer (Backend oriented) - Get Paid",
+   "uuid": "1287fa3b-d825-4480-8682-20fc5dff16a8",
+   "jobAdId": "5d0fbad1-1c1a-4c49-a585-988a1a0ef2a7",
+   "defaultJobAd": false,
+   "refNumber": "REF238D",
+   "company": {
+    "identifier": "Wix2",
+    "name": "Wix"
+   },
+   "releasedDate": "2026-11-09T13:14:07.060Z",
+   "location": {
+    "city": "Vilnius",
+    "region": "Vilnius County",
+    "country": "lt",
+    "remote": false,
+    "hybrid": false,
+    "latitude": "54.6871555",
+    "longitude": "25.2796514",
+    "fullLocation": "Vilnius, Vilnius County, Lithuania"
+   },
+   "industry": {
+    "id": "internet",
+    "label": "Internet"
+   },
+   "department": {},
+   "function": {
+    "id": "information_technology",
+    "label": "Information Technology"
+   },
+   "typeOfEmployment": {
+    "id": "permanent",
+    "label": "Full-time"
+   },
+   "experienceLevel": {
+    "id": "mid_senior_level",
+    "label": "Mid-Senior Level"
+   },
+   "customField": [
+    {
+     "fieldId": "6437bd8e8ea74a72671fc0be",
+     "fieldLabel": "Shifts",
+     "valueId": "ec54d13f-eae2-4088-92cf-abe3f84a5b92",
+     "valueLabel": "No"
+    },
+    {
+     "fieldId": "6437b9e5c9f4d66fc814ca64",
+     "fieldLabel": "Seniority",
+     "valueId": "38519084-1bea-4066-8354-f29e2c38f930",
+     "valueLabel": "Mid-Senior"
+    },
+    {
+     "fieldId": "6437bc28bedfdf6c4a01c638",
+     "fieldLabel": "Managerial Position",
+     "valueId": "75e2a60d-61f6-42be-be74-f9ad03663118",
+     "valueLabel": "No"
+    },
+    {
+     "fieldId": "6437b0896fc67f3872da25f4",
+     "fieldLabel": "Employment Terms",
+     "valueId": "63b0788e-bf59-44a4-bec7-d355f6da1a48",
+     "valueLabel": "Other"
+    },
+    {
+     "fieldId": "6437b82c8ea74a72671fc0bd",
+     "fieldLabel": "Guild",
+     "valueId": "300000004457099",
+     "valueLabel": "R&D"
+    },
+    {
+     "fieldId": "6437be5bc9f4d66fc814ca66",
+     "fieldLabel": "Child / Parent",
+     "valueId": "fa684f98-575f-4c97-9a54-58e3d53a385a",
+     "valueLabel": "Parent External"
+    },
+    {
+     "fieldId": "6437b45199ea7f358c21d565",
+     "fieldLabel": "Site",
+     "valueId": "300000004407118",
+     "valueLabel": "Vilnius"
+    },
+    {
+     "fieldId": "6432abd34d9f434bdb15aaf0",
+     "fieldLabel": "Brands",
+     "valueId": "default",
+     "valueLabel": "Wix"
+    },
+    {
+     "fieldId": "6437bd6bbb340d0b0a89a889",
+     "fieldLabel": "Student/Intern",
+     "valueId": "8339fec2-bc5c-4c74-b40e-e8b9d930c78b",
+     "valueLabel": "No"
+    },
+    {
+     "fieldId": "6437bd30c9f4d66fc814ca65",
+     "fieldLabel": "Temp",
+     "valueId": "b24ee80e-cb83-4cee-9400-f703ed3e17ef",
+     "valueLabel": "N"
+    },
+    {
+     "fieldId": "6437b9a2dc27cf10eb3e8148",
+     "fieldLabel": "Profession",
+     "valueId": "300000004407428",
+     "valueLabel": "Server"
+    },
+    {
+     "fieldId": "COUNTRY",
+     "fieldLabel": "Country/Region",
+     "valueId": "lt",
+     "valueLabel": "Lithuania"
+    },
+    {
+     "fieldId": "6437b865d8fff567fd5ae319",
+     "fieldLabel": "Sub-Guild",
+     "valueId": "300000004457079",
+     "valueLabel": "R&D\\Server"
+    },
+    {
+     "fieldId": "6437b41f07c43310e8c5d112",
+     "fieldLabel": "City",
+     "valueId": "200000000000182",
+     "valueLabel": "Vilnius"
+    },
+    {
+     "fieldId": "6437b40dbb340d0b0a89a887",
+     "fieldLabel": "Wix Country",
+     "valueId": "100000008996700",
+     "valueLabel": "Lithuania"
+    },
+    {
+     "fieldId": "6437bfeb1d810c4bc5ad4cca",
+     "fieldLabel": "Internal/External",
+     "valueId": "f0f3ddc5-d336-4ab1-bc2f-99b8c2acbc63",
+     "valueLabel": "External"
+    },
+    {
+     "fieldId": "6437bd0199ea7f358c21d566",
+     "fieldLabel": "Full Part Time",
+     "valueId": "c5cf41be-3ee1-40ff-ba3e-39a6b4454032",
+     "valueLabel": "Full time"
+    },
+    {
+     "fieldId": "6437be3307c43310e8c5d113",
+     "fieldLabel": "Priority Level",
+     "valueId": "90563a9f-1c3d-4a0f-b5e1-407dabb89ced",
+     "valueLabel": "Focus"
+    }
+   ],
+   "visibility": "PUBLIC",
+   "ref": "https://api.smartrecruiters.com/v1/companies/Wix2/postings/744000160612109",
+   "language": {
+    "code": "en",
+    "label": "English",
+    "labelNative": "English (US)"
+   }
+  },
+  {
+   "id": "744000160559549",
+   "name": "Senior AI Engineer - Marketing AI Transformation",
+   "uuid": "e9520fea-2887-4980-a487-a3862cebda61",
+   "jobAdId": "2d251ac5-c477-46b1-a63e-810d5541187b",
+   "defaultJobAd": true,
+   "refNumber": "oracle-e22fb8c0-fe63-532d-9c7c-0472b3c1776c-T1783338042",
+   "company": {
+    "identifier": "Wix2",
+    "name": "Wix"
+   },
+   "releasedDate": "2026-11-09T09:01:02.300Z",
+   "location": {
+    "city": "Tel Aviv",
+    "country": "il",
+    "remote": false,
+    "hybrid": false,
+    "fullLocation": "Tel Aviv, , Israel"
+   },
+   "industry": {
+    "id": "internet",
+    "label": "Internet"
+   },
+   "department": {},
+   "function": {
+    "id": "other",
+    "label": "Other"
+   },
+   "typeOfEmployment": {
+    "id": "permanent",
+    "label": "Full-time"
+   },
+   "experienceLevel": {
+    "id": "mid_senior_level",
+    "label": "Mid-Senior Level"
+   },
+   "customField": [
+    {
+     "fieldId": "6437bd8e8ea74a72671fc0be",
+     "fieldLabel": "Shifts",
+     "valueId": "ec54d13f-eae2-4088-92cf-abe3f84a5b92",
+     "valueLabel": "No"
+    },
+    {
+     "fieldId": "6437b37c07c43310e8c5d111",
+     "fieldLabel": "FTE",
+     "valueId": "14d19fca-c9b0-4eb7-a386-a54dba4efbe4",
+     "valueLabel": "1"
+    },
+    {
+     "fieldId": "6437b9e5c9f4d66fc814ca64",
+     "fieldLabel": "Seniority",
+     "valueId": "38519084-1bea-4066-8354-f29e2c38f930",
+     "valueLabel": "Mid-Senior"
+    },
+    {
+     "fieldId": "6437b0896fc67f3872da25f4",
+     "fieldLabel": "Employment Terms",
+     "valueId": "2cbb6c41-5599-4031-99ec-81f837ce3ea0",
+     "valueLabel": "IL Global Full Time"
+    },
+    {
+     "fieldId": "6437b82c8ea74a72671fc0bd",
+     "fieldLabel": "Guild",
+     "valueId": "300000004457099",
+     "valueLabel": "R&D"
+    },
+    {
+     "fieldId": "6437be5bc9f4d66fc814ca66",
+     "fieldLabel": "Child / Parent",
+     "valueId": "8ae13d47-2afa-44bf-9dda-0736fe53b4b5",
+     "valueLabel": "Child"
+    },
+    {
+     "fieldId": "6437b45199ea7f358c21d565",
+     "fieldLabel": "Site",
+     "valueId": "300000444526746",
+     "valueLabel": "Campus"
+    },
+    {
+     "fieldId": "6432abd34d9f434bdb15aaf0",
+     "fieldLabel": "Brands",
+     "valueId": "default",
+     "valueLabel": "Wix"
+    },
+    {
+     "fieldId": "6437bd6bbb340d0b0a89a889",
+     "fieldLabel": "Student/Intern",
+     "valueId": "8339fec2-bc5c-4c74-b40e-e8b9d930c78b",
+     "valueLabel": "No"
+    },
+    {
+     "fieldId": "6437bd30c9f4d66fc814ca65",
+     "fieldLabel": "Temp",
+     "valueId": "b24ee80e-cb83-4cee-9400-f703ed3e17ef",
+     "valueLabel": "N"
+    },
+    {
+     "fieldId": "6437b9a2dc27cf10eb3e8148",
+     "fieldLabel": "Profession",
+     "valueId": "300000004407428",
+     "valueLabel": "Server"
+    },
+    {
+     "fieldId": "6437b25ea34c143a5e67c0dc",
+     "fieldLabel": "Salary Basis",
+     "valueId": "0afcbea5-ef7b-46d9-819f-768592778926",
+     "valueLabel": "Salary-Monthly[ILS]"
+    },
+    {
+     "fieldId": "COUNTRY",
+     "fieldLabel": "Country/Region",
+     "valueId": "il",
+     "valueLabel": "Israel"
+    },
+    {
+     "fieldId": "6437b41f07c43310e8c5d112",
+     "fieldLabel": "City",
+     "valueId": "200000000000214",
+     "valueLabel": "Tel Aviv"
+    },
+    {
+     "fieldId": "6437b88a1d810c4bc5ad4cc9",
+     "fieldLabel": "Department/Company",
+     "valueId": "300000004416591",
+     "valueLabel": "Marketing"
+    },
+    {
+     "fieldId": "6437b40dbb340d0b0a89a887",
+     "fieldLabel": "Wix Country",
+     "valueId": "100000002995936",
+     "valueLabel": "Israel"
+    },
+    {
+     "fieldId": "6437bfeb1d810c4bc5ad4cca",
+     "fieldLabel": "Internal/External",
+     "valueId": "902c72ad-6d44-42f9-897a-c6bae6dbc78e",
+     "valueLabel": "Both"
+    },
+    {
+     "fieldId": "6437b32abedfdf6c4a01c637",
+     "fieldLabel": "Hourly Salaried Code",
+     "valueId": "21486b9c-2de7-40fc-bf3a-4ad6cbc49006",
+     "valueLabel": "GH"
+    },
+    {
+     "fieldId": "6437bd0199ea7f358c21d566",
+     "fieldLabel": "Full Part Time",
+     "valueId": "c5cf41be-3ee1-40ff-ba3e-39a6b4454032",
+     "valueLabel": "Full time"
+    },
+    {
+     "fieldId": "6437be3307c43310e8c5d113",
+     "fieldLabel": "Priority Level",
+     "valueId": "90563a9f-1c3d-4a0f-b5e1-407dabb89ced",
+     "valueLabel": "Focus"
+    }
+   ],
+   "visibility": "PUBLIC",
+   "ref": "https://api.smartrecruiters.com/v1/companies/Wix2/postings/744000160559549",
+   "language": {
+    "code": "en",
+    "label": "English",
+    "labelNative": "English (US)"
+   }
+  },
+  {
+   "id": "744000162304899",
+   "name": "Social Media Manager",
+   "uuid": "06a06c65-ceb2-49d3-a9e6-e3b39646094f",
+   "jobAdId": "5952c271-5e08-45b9-adad-f78f14135e8b",
+   "defaultJobAd": false,
+   "refNumber": "oracle-e2a2cd53-3ff2-58a5-816d-d3aa2d9a7684-T1791455667",
+   "company": {
+    "identifier": "Wix2",
+    "name": "Wix"
+   },
+   "releasedDate": "2026-11-18T14:01:39.685Z",
+   "location": {
+    "city": "New York",
+    "region": "NY",
+    "country": "us",
+    "remote": false,
+    "hybrid": false,
+    "latitude": "40.7127753",
+    "longitude": "-74.0059728",
+    "fullLocation": "New York, NY, United States"
+   },
+   "industry": {
+    "id": "internet",
+    "label": "Internet"
+   },
+   "department": {},
+   "function": {
+    "id": "other",
+    "label": "Other"
+   },
+   "typeOfEmployment": {
+    "id": "permanent",
+    "label": "Full-time"
+   },
+   "experienceLevel": {
+    "id": "mid_senior_level",
+    "label": "Mid-Senior Level"
+   },
+   "customField": [
+    {
+     "fieldId": "6437bd8e8ea74a72671fc0be",
+     "fieldLabel": "Shifts",
+     "valueId": "ec54d13f-eae2-4088-92cf-abe3f84a5b92",
+     "valueLabel": "No"
+    },
+    {
+     "fieldId": "6437b37c07c43310e8c5d111",
+     "fieldLabel": "FTE",
+     "valueId": "14d19fca-c9b0-4eb7-a386-a54dba4efbe4",
+     "valueLabel": "1"
+    },
+    {
+     "fieldId": "6437b9e5c9f4d66fc814ca64",
+     "fieldLabel": "Seniority",
+     "valueId": "81fbfcd3-d5f3-42d9-8d63-6056419b19a4",
+     "valueLabel": "Mid"
+    },
+    {
+     "fieldId": "6437b0896fc67f3872da25f4",
+     "fieldLabel": "Employment Terms",
+     "valueId": "2cbb6c41-5599-4031-99ec-81f837ce3ea0",
+     "valueLabel": "IL Global Full Time"
+    },
+    {
+     "fieldId": "6437b82c8ea74a72671fc0bd",
+     "fieldLabel": "Guild",
+     "valueId": "300000004457059",
+     "valueLabel": "Marketing"
+    },
+    {
+     "fieldId": "6437be5bc9f4d66fc814ca66",
+     "fieldLabel": "Child / Parent",
+     "valueId": "8ae13d47-2afa-44bf-9dda-0736fe53b4b5",
+     "valueLabel": "Child"
+    },
+    {
+     "fieldId": "6437b45199ea7f358c21d565",
+     "fieldLabel": "Site",
+     "valueId": "300000444526746",
+     "valueLabel": "Campus"
+    },
+    {
+     "fieldId": "6432abd34d9f434bdb15aaf0",
+     "fieldLabel": "Brands",
+     "valueId": "default",
+     "valueLabel": "Wix"
+    },
+    {
+     "fieldId": "6437bd6bbb340d0b0a89a889",
+     "fieldLabel": "Student/Intern",
+     "valueId": "8339fec2-bc5c-4c74-b40e-e8b9d930c78b",
+     "valueLabel": "No"
+    },
+    {
+     "fieldId": "6437bd30c9f4d66fc814ca65",
+     "fieldLabel": "Temp",
+     "valueId": "b24ee80e-cb83-4cee-9400-f703ed3e17ef",
+     "valueLabel": "N"
+    },
+    {
+     "fieldId": "6437b9a2dc27cf10eb3e8148",
+     "fieldLabel": "Profession",
+     "valueId": "300000290999040",
+     "valueLabel": "Social Media"
+    },
+    {
+     "fieldId": "6437b25ea34c143a5e67c0dc",
+     "fieldLabel": "Salary Basis",
+     "valueId": "0afcbea5-ef7b-46d9-819f-768592778926",
+     "valueLabel": "Salary-Monthly[ILS]"
+    },
+    {
+     "fieldId": "COUNTRY",
+     "fieldLabel": "Country/Region",
+     "valueId": "il",
+     "valueLabel": "Israel"
+    },
+    {
+     "fieldId": "6437b7bdbb340d0b0a89a888",
+     "fieldLabel": "Team",
+     "valueId": "300002404580906",
+     "valueLabel": "Marketing\\Social"
+    },
+    {
+     "fieldId": "6437b41f07c43310e8c5d112",
+     "fieldLabel": "City",
+     "valueId": "200000000000214",
+     "valueLabel": "Tel Aviv"
+    },
+    {
+     "fieldId": "6437b88a1d810c4bc5ad4cc9",
+     "fieldLabel": "Department/Company",
+     "valueId": "300000004416591",
+     "valueLabel": "Marketing"
+    },
+    {
+     "fieldId": "6437b40dbb340d0b0a89a887",
+     "fieldLabel": "Wix Country",
+     "valueId": "100000002995936",
+     "valueLabel": "Israel"
+    },
+    {
+     "fieldId": "6437bfeb1d810c4bc5ad4cca",
+     "fieldLabel": "Internal/External",
+     "valueId": "902c72ad-6d44-42f9-897a-c6bae6dbc78e",
+     "valueLabel": "Both"
+    },
+    {
+     "fieldId": "6437b32abedfdf6c4a01c637",
+     "fieldLabel": "Hourly Salaried Code",
+     "valueId": "21486b9c-2de7-40fc-bf3a-4ad6cbc49006",
+     "valueLabel": "GH"
+    },
+    {
+     "fieldId": "6437bd0199ea7f358c21d566",
+     "fieldLabel": "Full Part Time",
+     "valueId": "c5cf41be-3ee1-40ff-ba3e-39a6b4454032",
+     "valueLabel": "Full time"
+    },
+    {
+     "fieldId": "6437be3307c43310e8c5d113",
+     "fieldLabel": "Priority Level",
+     "valueId": "90563a9f-1c3d-4a0f-b5e1-407dabb89ced",
+     "valueLabel": "Focus"
+    }
+   ],
+   "visibility": "PUBLIC",
+   "ref": "https://api.smartrecruiters.com/v1/companies/Wix2/postings/744000162304899",
+   "language": {
+    "code": "en",
+    "label": "English",
+    "labelNative": "English (US)"
+   }
+  },
+  {
+   "id": "744000162304759",
+   "name": "Social Media Manager",
+   "uuid": "0807bcc2-acf2-401b-b80f-40b5cb10e097",
+   "jobAdId": "5c1b5c49-cfeb-49c1-984a-43cdd840c555",
+   "defaultJobAd": true,
+   "refNumber": "oracle-e2a2cd53-3ff2-58a5-816d-d3aa2d9a7684-T1791455667",
+   "company": {
+    "identifier": "Wix2",
+    "name": "Wix"
+   },
+   "releasedDate": "2026-11-18T14:01:05.548Z",
+   "location": {
+    "city": "Tel Aviv",
+    "country": "il",
+    "remote": false,
+    "hybrid": false,
+    "fullLocation": "Tel Aviv, , Israel"
+   },
+   "industry": {
+    "id": "internet",
+    "label": "Internet"
+   },
+   "department": {},
+   "function": {
+    "id": "other",
+    "label": "Other"
+   },
+   "typeOfEmployment": {
+    "id": "permanent",
+    "label": "Full-time"
+   },
+   "experienceLevel": {
+    "id": "mid_senior_level",
+    "label": "Mid-Senior Level"
+   },
+   "customField": [
+    {
+     "fieldId": "6437bd8e8ea74a72671fc0be",
+     "fieldLabel": "Shifts",
+     "valueId": "ec54d13f-eae2-4088-92cf-abe3f84a5b92",
+     "valueLabel": "No"
+    },
+    {
+     "fieldId": "6437b37c07c43310e8c5d111",
+     "fieldLabel": "FTE",
+     "valueId": "14d19fca-c9b0-4eb7-a386-a54dba4efbe4",
+     "valueLabel": "1"
+    },
+    {
+     "fieldId": "6437b9e5c9f4d66fc814ca64",
+     "fieldLabel": "Seniority",
+     "valueId": "81fbfcd3-d5f3-42d9-8d63-6056419b19a4",
+     "valueLabel": "Mid"
+    },
+    {
+     "fieldId": "6437b0896fc67f3872da25f4",
+     "fieldLabel": "Employment Terms",
+     "valueId": "2cbb6c41-5599-4031-99ec-81f837ce3ea0",
+     "valueLabel": "IL Global Full Time"
+    },
+    {
+     "fieldId": "6437b82c8ea74a72671fc0bd",
+     "fieldLabel": "Guild",
+     "valueId": "300000004457059",
+     "valueLabel": "Marketing"
+    },
+    {
+     "fieldId": "6437be5bc9f4d66fc814ca66",
+     "fieldLabel": "Child / Parent",
+     "valueId": "8ae13d47-2afa-44bf-9dda-0736fe53b4b5",
+     "valueLabel": "Child"
+    },
+    {
+     "fieldId": "6437b45199ea7f358c21d565",
+     "fieldLabel": "Site",
+     "valueId": "300000444526746",
+     "valueLabel": "Campus"
+    },
+    {
+     "fieldId": "6432abd34d9f434bdb15aaf0",
+     "fieldLabel": "Brands",
+     "valueId": "default",
+     "valueLabel": "Wix"
+    },
+    {
+     "fieldId": "6437bd6bbb340d0b0a89a889",
+     "fieldLabel": "Student/Intern",
+     "valueId": "8339fec2-bc5c-4c74-b40e-e8b9d930c78b",
+     "valueLabel": "No"
+    },
+    {
+     "fieldId": "6437bd30c9f4d66fc814ca65",
+     "fieldLabel": "Temp",
+     "valueId": "b24ee80e-cb83-4cee-9400-f703ed3e17ef",
+     "valueLabel": "N"
+    },
+    {
+     "fieldId": "6437b9a2dc27cf10eb3e8148",
+     "fieldLabel": "Profession",
+     "valueId": "300000290999040",
+     "valueLabel": "Social Media"
+    },
+    {
+     "fieldId": "6437b25ea34c143a5e67c0dc",
+     "fieldLabel": "Salary Basis",
+     "valueId": "0afcbea5-ef7b-46d9-819f-768592778926",
+     "valueLabel": "Salary-Monthly[ILS]"
+    },
+    {
+     "fieldId": "COUNTRY",
+     "fieldLabel": "Country/Region",
+     "valueId": "il",
+     "valueLabel": "Israel"
+    },
+    {
+     "fieldId": "6437b7bdbb340d0b0a89a888",
+     "fieldLabel": "Team",
+     "valueId": "300002404580906",
+     "valueLabel": "Marketing\\Social"
+    },
+    {
+     "fieldId": "6437b41f07c43310e8c5d112",
+     "fieldLabel": "City",
+     "valueId": "200000000000214",
+     "valueLabel": "Tel Aviv"
+    },
+    {
+     "fieldId": "6437b88a1d810c4bc5ad4cc9",
+     "fieldLabel": "Department/Company",
+     "valueId": "300000004416591",
+     "valueLabel": "Marketing"
+    },
+    {
+     "fieldId": "6437b40dbb340d0b0a89a887",
+     "fieldLabel": "Wix Country",
+     "valueId": "100000002995936",
+     "valueLabel": "Israel"
+    },
+    {
+     "fieldId": "6437bfeb1d810c4bc5ad4cca",
+     "fieldLabel": "Internal/External",
+     "valueId": "902c72ad-6d44-42f9-897a-c6bae6dbc78e",
+     "valueLabel": "Both"
+    },
+    {
+     "fieldId": "6437b32abedfdf6c4a01c637",
+     "fieldLabel": "Hourly Salaried Code",
+     "valueId": "21486b9c-2de7-40fc-bf3a-4ad6cbc49006",
+     "valueLabel": "GH"
+    },
+    {
+     "fieldId": "6437bd0199ea7f358c21d566",
+     "fieldLabel": "Full Part Time",
+     "valueId": "c5cf41be-3ee1-40ff-ba3e-39a6b4454032",
+     "valueLabel": "Full time"
+    },
+    {
+     "fieldId": "6437be3307c43310e8c5d113",
+     "fieldLabel": "Priority Level",
+     "valueId": "90563a9f-1c3d-4a0f-b5e1-407dabb89ced",
+     "valueLabel": "Focus"
+    }
+   ],
+   "visibility": "PUBLIC",
+   "ref": "https://api.smartrecruiters.com/v1/companies/Wix2/postings/744000162304759",
+   "language": {
+    "code": "en",
+    "label": "English",
+    "labelNative": "English (US)"
+   }
+  }
+ ]
+}

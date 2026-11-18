@@ -1,0 +1,175 @@
+{
+ "id": "744000161753345",
+ "name": "xEngineer (Backend Core)",
+ "uuid": "ee41159b-2544-4bd6-9d95-0772e2732ac6",
+ "jobId": "0f953d96-63aa-47d4-bacb-cc5aa8ff1665",
+ "jobAdId": "8cce0502-4f5f-421e-b400-44ec39ffb9a2",
+ "defaultJobAd": false,
+ "refNumber": "oracle-009561ae-4b8b-5427-96f7-c4e5ae3ff7f8-T1787234583",
+ "company": {
+  "name": "Wix",
+  "identifier": "Wix2"
+ },
+ "location": {
+  "city": "Kyiv",
+  "country": "ua",
+  "remote": false,
+  "hybrid": true,
+  "fullLocation": "Kyiv, , Ukraine"
+ },
+ "customField": [
+  {
+   "fieldId": "6437bd8e8ea74a72671fc0be",
+   "fieldLabel": "Shifts",
+   "valueId": "ec54d13f-eae2-4088-92cf-abe3f84a5b92",
+   "valueLabel": "No"
+  },
+  {
+   "fieldId": "6437b9e5c9f4d66fc814ca64",
+   "fieldLabel": "Seniority",
+   "valueId": "38519084-1bea-4066-8354-f29e2c38f930",
+   "valueLabel": "Mid-Senior"
+  },
+  {
+   "fieldId": "6437b82c8ea74a72671fc0bd",
+   "fieldLabel": "Guild",
+   "valueId": "300000004457099",
+   "valueLabel": "R&D"
+  },
+  {
+   "fieldId": "6437be5bc9f4d66fc814ca66",
+   "fieldLabel": "Child / Parent",
+   "valueId": "8ae13d47-2afa-44bf-9dda-0736fe53b4b5",
+   "valueLabel": "Child"
+  },
+  {
+   "fieldId": "6437b45199ea7f358c21d565",
+   "fieldLabel": "Site",
+   "valueId": "300000004407178",
+   "valueLabel": "Kyiv"
+  },
+  {
+   "fieldId": "6432abd34d9f434bdb15aaf0",
+   "fieldLabel": "Brands",
+   "valueId": "default",
+   "valueLabel": "Wix"
+  },
+  {
+   "fieldId": "6437bd6bbb340d0b0a89a889",
+   "fieldLabel": "Student/Intern",
+   "valueId": "8339fec2-bc5c-4c74-b40e-e8b9d930c78b",
+   "valueLabel": "No"
+  },
+  {
+   "fieldId": "6437bd30c9f4d66fc814ca65",
+   "fieldLabel": "Temp",
+   "valueId": "b24ee80e-cb83-4cee-9400-f703ed3e17ef",
+   "valueLabel": "N"
+  },
+  {
+   "fieldId": "6437b9a2dc27cf10eb3e8148",
+   "fieldLabel": "Profession",
+   "valueId": "300000004407424",
+   "valueLabel": "Architecture"
+  },
+  {
+   "fieldId": "COUNTRY",
+   "fieldLabel": "Country/Region",
+   "valueId": "ua",
+   "valueLabel": "Ukraine"
+  },
+  {
+   "fieldId": "6437b865d8fff567fd5ae319",
+   "fieldLabel": "Sub-Guild",
+   "valueId": "300002160673243",
+   "valueLabel": "R&D\\xEngineering"
+  },
+  {
+   "fieldId": "6437b41f07c43310e8c5d112",
+   "fieldLabel": "City",
+   "valueId": "200000000000191",
+   "valueLabel": "Kyiv"
+  },
+  {
+   "fieldId": "6437b88a1d810c4bc5ad4cc9",
+   "fieldLabel": "Department/Company",
+   "valueId": "300000019021302",
+   "valueLabel": "Payments"
+  },
+  {
+   "fieldId": "6437b40dbb340d0b0a89a887",
+   "fieldLabel": "Wix Country",
+   "valueId": "100000009634479",
+   "valueLabel": "Ukraine"
+  },
+  {
+   "fieldId": "6437bfeb1d810c4bc5ad4cca",
+   "fieldLabel": "Internal/External",
+   "valueId": "902c72ad-6d44-42f9-897a-c6bae6dbc78e",
+   "valueLabel": "Both"
+  },
+  {
+   "fieldId": "6437bd0199ea7f358c21d566",
+   "fieldLabel": "Full Part Time",
+   "valueId": "c5cf41be-3ee1-40ff-ba3e-39a6b4454032",
+   "valueLabel": "Full time"
+  },
+  {
+   "fieldId": "6437be3307c43310e8c5d113",
+   "fieldLabel": "Priority Level",
+   "valueId": "90563a9f-1c3d-4a0f-b5e1-407dabb89ced",
+   "valueLabel": "Focus"
+  }
+ ],
+ "releasedDate": "2026-11-16T09:20:05.818Z",
+ "creator": {
+  "name": "",
+  "avatarUrl": ""
+ },
+ "postingUrl": "https://jobs.smartrecruiters.com/Wix2/744000161753345-xengineer-backend-core-",
+ "applyUrl": "https://jobs.smartrecruiters.com/Wix2/744000161753345-xengineer-backend-core-?oga=true",
+ "referralUrl": "https://jobs.smartrecruiters.com/external-referrals/company/Wix2/publication/ee41159b-2544-4bd6-9d95-0772e2732ac6?dcr_ci=Wix2",
+ "jobAd": {
+  "sections": {
+   "companyDescription": {
+    "title": "Company Description",
+    "text": ""
+   },
+   "jobDescription": {
+    "title": "Job Description",
+    "text": "<p>As a backend-oriented xEngineer in the Account team at Wix Payments, you'll own the services behind the payment products that businesses running on Wix rely on. You'll deliver features end to end, from shaping what gets built to running it in production, with your focus on the backend and hands-on contributions across the stack, frontend included.</p><p>In your day-to-day, you will:</p><ul><li>Build and run the services behind the Wix Payments account: how a merchant signs up, gets verified and starts accepting payments</li><li>Own the onboarding funnel end to end, from the first click on \"Accept payments\" to the first successful payout, and remove the steps where merchants drop off</li><li>Model the account lifecycle and its statuses (pending, verified, restricted, suspended and the transitions between them) as clear, reliable APIs that other Wix products depend on</li><li>Integrate with verification, risk and compliance providers, and handle their asynchronous results, retries and failures</li><li>Make account status and required actions clear to merchants, building the backend for it and contributing to the frontend so nobody gets stuck without knowing why</li><li>Measure the"
+   },
+   "qualifications": {
+    "title": "Qualifications",
+    "text": "<ul><li>&#xa0;</li><li>3+ years as a software engineer, with real ownership of backend systems running in production, preferably in JVM-based languages</li><li>Deep backend expertise, and the drive to work outside it, including contributing to the frontend (TypeScript, React) when a feature needs it</li><li>A track record of delivering features end to end, from shaping what gets built to running it in production</li><li>Solid design skills: APIs, data models and service flows that scale with the product, in a microservice architecture</li><li>Ability to debug and investigate production issues, and familiarity with CI/CD practices</li><li>Experience working with AI tools, and good judgment about what they produce</li><li>Curiosity about the whole system, from how a service behaves under load to how the screen in front of the merchant feels</li><li>Care about correctness in systems that handle people's money</li><li>Good communication and collaboration skills</li><li>Payments experience - an advantage</li><li>&#xa0;</li></ul>"
+   },
+   "additionalInformation": {
+    "title": "Additional Information",
+    "text": "<p>We're the Wix Payments team. We give Wix users a built-in way to collect payments from their customers and manage their income online, in person and on the go. Our products cover payment acceptance, payouts, refunds and chargebacks, and they are available to merchants in about 15 countries. In payments, a bug is someone's money, so we care about correctness as much as speed.</p><p>You'll also be part of the Wix Engineering Guild, a community of AI-native xEngineers with deep expertise in backend, frontend or mobile, who take ownership of projects end to end.</p><p>The Account team owns the merchant's Wix Payments account: onboarding, verification, account status and the funnel that takes a business from sign-up to its first payment.</p>"
+   }
+  }
+ },
+ "active": true,
+ "visibility": "PUBLIC",
+ "industry": {
+  "id": "internet",
+  "label": "Internet"
+ },
+ "function": {
+  "id": "other",
+  "label": "Other"
+ },
+ "experienceLevel": {
+  "id": "mid_senior_level",
+  "label": "Mid-Senior Level"
+ },
+ "typeOfEmployment": {
+  "id": "permanent",
+  "label": "Full-time"
+ },
+ "language": {
+  "code": "en",
+  "label": "English",
+  "labelNative": "English (US)"
+ }
+}
