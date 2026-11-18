@@ -12,7 +12,17 @@ import (
 
 const userAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36 job-scout/1.0"
 
+// apiUserAgent identifica o job-scout de forma honesta para APIs públicas
+// (ATS e boards remotos), que não precisam de um User-Agent de navegador.
+const apiUserAgent = "job-scout/1.0 (personal job aggregator)"
+
 var httpClient = &http.Client{Timeout: 20 * time.Second}
+
+// httpGetAPI faz um GET com o User-Agent identificável do job-scout — usado
+// pelas fontes com API JSON pública.
+func httpGetAPI(url string) ([]byte, error) {
+	return httpGetWithUA(url, apiUserAgent)
+}
 
 // httpGet faz uma requisição GET com um User-Agent de navegador e retorna o corpo da resposta.
 func httpGet(url string) ([]byte, error) {

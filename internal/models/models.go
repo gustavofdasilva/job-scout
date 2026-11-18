@@ -1,6 +1,10 @@
 package models
 
-import "time"
+import (
+	"strings"
+	"time"
+	"unicode"
+)
 
 // Job representa uma vaga encontrada por um crawler.
 type Job struct {
@@ -14,6 +18,40 @@ type Job struct {
 	Salary      string    `json:"salary"`
 	FoundAt     time.Time `json:"found_at"`
 	Status      string    `json:"status"`
+
+	// LocationRestriction lista os países/regiões aceitos por uma vaga
+	// remota (ex: "USA", "Worldwide", "LATAM, Brazil"), quando a fonte
+	// informa isso explicitamente. Vazio = sem informação.
+	LocationRestriction string `json:"location_restriction"`
+
+	// Salário estruturado, preenchido só quando a fonte traz os valores
+	// separados. Salary (texto livre) continua sendo o campo exibido.
+	SalaryMin      int    `json:"salary_min"`
+	SalaryMax      int    `json:"salary_max"`
+	SalaryCurrency string `json:"salary_currency"`
+	SalaryPeriod   string `json:"salary_period"`
+}
+
+// DedupKey identifica a mesma vaga publicada em fontes diferentes (ex: no
+// ATS da empresa e num board remoto), combinando empresa e título
+// normalizados: minúsculas e só letras/dígitos. Vazio se faltar empresa ou
+// título.
+func (j Job) DedupKey() string {
+	company, title := normalizeKeyPart(j.Company), normalizeKeyPart(j.Title)
+	if company == "" || title == "" {
+		return ""
+	}
+	return company + "|" + title
+}
+
+func normalizeKeyPart(s string) string {
+	var b strings.Builder
+	for _, r := range strings.ToLower(s) {
+		if unicode.IsLetter(r) || unicode.IsDigit(r) {
+			b.WriteRune(r)
+		}
+	}
+	return b.String()
 }
 
 // Analysis representa o resultado da análise de fit de uma vaga feita pela LLM.

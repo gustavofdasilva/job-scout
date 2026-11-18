@@ -77,7 +77,18 @@ func buildPrompt(profile string, job models.Job) string {
 ## Vaga
 Título: %s
 Empresa: %s
+Localização: %s
+Restrição de localização (países/regiões aceitos): %s
+Salário: %s
 Descrição: %s
+
+## Regra de localização
+Eu moro no Brasil. Se a vaga for remota mas restrita a países/regiões que NÃO
+incluam Brasil, América Latina (LATAM) ou o mundo todo (Worldwide/Anywhere),
+trate isso como ponto negativo explícito: reduza o fit_score e escreva
+"vaga restrita a <região>" no fit_reasoning. Use a restrição de localização,
+a localização e a descrição pra decidir. Se não houver informação sobre
+restrição, NÃO penalize.
 
 Retorne exatamente nesse formato:
 {
@@ -85,7 +96,32 @@ Retorne exatamente nesse formato:
   "summary": "<resumo da vaga em 3-4 linhas em PT-BR>",
   "benefits": ["<benefício 1>", "<benefício 2>"],
   "fit_reasoning": "<por que essa vaga é ou não é boa pra mim, em 2-3 linhas>"
-}`, profile, job.Title, job.Company, job.Description)
+}`, profile, job.Title, job.Company,
+		orNotInformed(job.Location), orNotInformed(job.LocationRestriction), orNotInformed(jobSalary(job)),
+		job.Description)
+}
+
+func orNotInformed(s string) string {
+	if strings.TrimSpace(s) == "" {
+		return "não informado"
+	}
+	return s
+}
+
+// jobSalary prefere o texto livre de Salary e, na falta dele, monta um
+// texto a partir do salário estruturado (ex: "USD 120000–150000 / yearly").
+func jobSalary(job models.Job) string {
+	if job.Salary != "" {
+		return job.Salary
+	}
+	if job.SalaryMin == 0 && job.SalaryMax == 0 {
+		return ""
+	}
+	s := fmt.Sprintf("%s %d–%d", job.SalaryCurrency, job.SalaryMin, job.SalaryMax)
+	if job.SalaryPeriod != "" {
+		s += " / " + job.SalaryPeriod
+	}
+	return strings.TrimSpace(s)
 }
 
 // analysisResult é o formato esperado no JSON retornado pelo modelo.

@@ -161,7 +161,9 @@ func (s *Scheduler) runPipeline() {
 	var novas int
 	for _, j := range jobs {
 		bySource[j.Source]++
-		if j.URL == "" || s.db.JobExistsByURL(j.URL) {
+		// Dedup por URL e por empresa+título: a mesma vaga pode aparecer no
+		// ATS da empresa e em um ou mais boards remotos, com URLs diferentes.
+		if j.URL == "" || s.db.JobExistsByURL(j.URL) || s.db.JobExistsByDedupKey(j.DedupKey()) {
 			continue
 		}
 		if err := s.db.InsertJob(j); err != nil {

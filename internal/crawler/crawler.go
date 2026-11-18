@@ -4,9 +4,33 @@ package crawler
 
 import (
 	"log/slog"
+	"net/url"
+	"strings"
 
 	"job-scout/internal/models"
 )
+
+// normalizeURL gera a chave de dedup de uma URL de vaga: host em
+// minúsculas, sem fragmento, sem parâmetros de rastreamento (utm_*, ref,
+// source) e sem barra final. URLs que não parseiam voltam como estão.
+func normalizeURL(raw string) string {
+	u, err := url.Parse(strings.TrimSpace(raw))
+	if err != nil || u.Host == "" {
+		return raw
+	}
+	u.Host = strings.ToLower(u.Host)
+	u.Fragment = ""
+	q := u.Query()
+	for k := range q {
+		lk := strings.ToLower(k)
+		if strings.HasPrefix(lk, "utm_") || lk == "ref" || lk == "source" {
+			q.Del(k)
+		}
+	}
+	u.RawQuery = q.Encode()
+	u.Path = strings.TrimSuffix(u.Path, "/")
+	return u.String()
+}
 
 // Crawler é implementado por cada fonte de vagas suportada pelo job-scout.
 type Crawler interface {
@@ -52,18 +76,29 @@ func NewOrchestrator(entries []Entry) *Orchestrator {
 // os sites de origem. Retorna todas as vagas encontradas, deduplicadas por URL.
 func (o *Orchestrator) Run() ([]models.Job, error) {
 	seen := make(map[string]struct{})
+	seenKeys := make(map[string]struct{})
 	var results []models.Job
 
+	// Dedup por URL normalizada e por empresa+título (DedupKey): a mesma
+	// vaga pode vir do ATS da empresa e de um ou mais boards remotos.
 	addJobs := func(jobs []models.Job) int {
 		added := 0
 		for _, j := range jobs {
 			if j.URL == "" {
 				continue
 			}
-			if _, dup := seen[j.URL]; dup {
+			urlKey := normalizeURL(j.URL)
+			if _, dup := seen[urlKey]; dup {
 				continue
 			}
-			seen[j.URL] = struct{}{}
+			key := j.DedupKey()
+			if key != "" {
+				if _, dup := seenKeys[key]; dup {
+					continue
+				}
+				seenKeys[key] = struct{}{}
+			}
+			seen[urlKey] = struct{}{}
 			results = append(results, j)
 			added++
 		}

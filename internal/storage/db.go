@@ -92,6 +92,59 @@ CREATE TABLE IF NOT EXISTS profile (
 		return err
 	}
 
+	// Restrição de localização e salário estruturado, preenchidos pelas
+	// fontes que trazem esses dados (Himalayas, Jobicy etc.).
+	newJobColumns := []struct{ name, sqlType string }{
+		{"location_restriction", "TEXT NOT NULL DEFAULT ''"},
+		{"salary_min", "INTEGER NOT NULL DEFAULT 0"},
+		{"salary_max", "INTEGER NOT NULL DEFAULT 0"},
+		{"salary_currency", "TEXT NOT NULL DEFAULT ''"},
+		{"salary_period", "TEXT NOT NULL DEFAULT ''"},
+		{"dedup_key", "TEXT NOT NULL DEFAULT ''"},
+	}
+	for _, c := range newJobColumns {
+		if err := addColumnIfMissing(db.conn, "jobs", c.name, c.sqlType); err != nil {
+			return err
+		}
+	}
+	if _, err := db.conn.Exec(`CREATE INDEX IF NOT EXISTS idx_jobs_dedup_key ON jobs(dedup_key)`); err != nil {
+		return fmt.Errorf("erro ao criar índice de dedup_key: %w", err)
+	}
+
+	return db.backfillDedupKeys()
+}
+
+// backfillDedupKeys preenche dedup_key das vagas gravadas antes da coluna
+// existir, pra que a deduplicação por empresa+título também as considere.
+// Depois da primeira execução não há mais linhas vazias e isso é um no-op.
+func (db *DB) backfillDedupKeys() error {
+	rows, err := db.conn.Query(`SELECT id, company, title FROM jobs WHERE dedup_key = ''`)
+	if err != nil {
+		return fmt.Errorf("erro ao buscar vagas sem dedup_key: %w", err)
+	}
+	var pending []models.Job
+	for rows.Next() {
+		var j models.Job
+		if err := rows.Scan(&j.ID, &j.Company, &j.Title); err != nil {
+			rows.Close()
+			return fmt.Errorf("erro ao ler vaga sem dedup_key: %w", err)
+		}
+		pending = append(pending, j)
+	}
+	rows.Close()
+	if err := rows.Err(); err != nil {
+		return fmt.Errorf("erro ao iterar vagas sem dedup_key: %w", err)
+	}
+
+	for _, j := range pending {
+		key := j.DedupKey()
+		if key == "" {
+			continue
+		}
+		if _, err := db.conn.Exec(`UPDATE jobs SET dedup_key = ? WHERE id = ?`, key, j.ID); err != nil {
+			return fmt.Errorf("erro ao preencher dedup_key da vaga %q: %w", j.ID, err)
+		}
+	}
 	return nil
 }
 
@@ -131,9 +184,11 @@ func (db *DB) InsertJob(job models.Job) error {
 	}
 
 	_, err := db.conn.Exec(
-		`INSERT INTO jobs (id, source, title, company, location, url, description, salary, found_at, status)
-		 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+		`INSERT INTO jobs (id, source, title, company, location, url, description, salary, found_at, status,
+		                   location_restriction, salary_min, salary_max, salary_currency, salary_period, dedup_key)
+		 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
 		job.ID, job.Source, job.Title, job.Company, job.Location, job.URL, job.Description, job.Salary, job.FoundAt, job.Status,
+		job.LocationRestriction, job.SalaryMin, job.SalaryMax, job.SalaryCurrency, job.SalaryPeriod, job.DedupKey(),
 	)
 	if err != nil {
 		return fmt.Errorf("erro ao inserir vaga: %w", err)
@@ -151,6 +206,21 @@ func (db *DB) JobExistsByURL(url string) bool {
 	return count > 0
 }
 
+// JobExistsByDedupKey verifica se já existe uma vaga da mesma empresa com o
+// mesmo título (ver models.Job.DedupKey), mesmo que vinda de outra fonte ou
+// com outra URL. Chave vazia nunca é considerada duplicata.
+func (db *DB) JobExistsByDedupKey(key string) bool {
+	if key == "" {
+		return false
+	}
+	var count int
+	err := db.conn.QueryRow(`SELECT COUNT(1) FROM jobs WHERE dedup_key = ?`, key).Scan(&count)
+	if err != nil {
+		return false
+	}
+	return count > 0
+}
+
 // GetPendingAnalysisJobs retorna as vagas que ainda não têm nenhuma análise,
 // das mais recentes para as mais antigas. Inclui tanto vagas recém-inseridas
 // quanto vagas de ciclos anteriores cuja análise falhou (erro do LLM, API key
@@ -160,7 +230,7 @@ func (db *DB) JobExistsByURL(url string) bool {
 // sempre. limit <= 0 e maxAttempts <= 0 desativam o respectivo limite.
 func (db *DB) GetPendingAnalysisJobs(limit, maxAttempts int) ([]models.Job, error) {
 	query := `
-		SELECT j.id, j.source, j.title, j.company, j.location, j.url, j.description, j.salary, j.found_at, j.status
+		SELECT j.id, j.source, j.title, j.company, j.location, j.url, j.description, j.salary, j.found_at, j.status, j.location_restriction, j.salary_min, j.salary_max, j.salary_currency, j.salary_period
 		FROM jobs j
 		WHERE NOT EXISTS (SELECT 1 FROM analyses a WHERE a.job_id = j.id)
 	`
@@ -184,7 +254,7 @@ func (db *DB) GetPendingAnalysisJobs(limit, maxAttempts int) ([]models.Job, erro
 	var jobs []models.Job
 	for rows.Next() {
 		var j models.Job
-		if err := rows.Scan(&j.ID, &j.Source, &j.Title, &j.Company, &j.Location, &j.URL, &j.Description, &j.Salary, &j.FoundAt, &j.Status); err != nil {
+		if err := rows.Scan(&j.ID, &j.Source, &j.Title, &j.Company, &j.Location, &j.URL, &j.Description, &j.Salary, &j.FoundAt, &j.Status, &j.LocationRestriction, &j.SalaryMin, &j.SalaryMax, &j.SalaryCurrency, &j.SalaryPeriod); err != nil {
 			return nil, fmt.Errorf("erro ao ler vaga pendente de análise: %w", err)
 		}
 		jobs = append(jobs, j)
@@ -236,7 +306,7 @@ func (db *DB) LatestJobFoundAt(source string) (time.Time, bool, error) {
 // Strings vazias e valores <= 0 desativam o respectivo filtro.
 func (db *DB) GetJobs(status string, minScore int) ([]models.Job, error) {
 	query := `
-		SELECT DISTINCT j.id, j.source, j.title, j.company, j.location, j.url, j.description, j.salary, j.found_at, j.status
+		SELECT DISTINCT j.id, j.source, j.title, j.company, j.location, j.url, j.description, j.salary, j.found_at, j.status, j.location_restriction, j.salary_min, j.salary_max, j.salary_currency, j.salary_period
 		FROM jobs j
 		LEFT JOIN analyses a ON a.job_id = j.id
 		WHERE 1=1
@@ -262,7 +332,7 @@ func (db *DB) GetJobs(status string, minScore int) ([]models.Job, error) {
 	var jobs []models.Job
 	for rows.Next() {
 		var j models.Job
-		if err := rows.Scan(&j.ID, &j.Source, &j.Title, &j.Company, &j.Location, &j.URL, &j.Description, &j.Salary, &j.FoundAt, &j.Status); err != nil {
+		if err := rows.Scan(&j.ID, &j.Source, &j.Title, &j.Company, &j.Location, &j.URL, &j.Description, &j.Salary, &j.FoundAt, &j.Status, &j.LocationRestriction, &j.SalaryMin, &j.SalaryMax, &j.SalaryCurrency, &j.SalaryPeriod); err != nil {
 			return nil, fmt.Errorf("erro ao ler vaga: %w", err)
 		}
 		jobs = append(jobs, j)
@@ -293,7 +363,7 @@ type JobWithAnalysis struct {
 // GetJobsWithAnalysis (lista, com filtros) quanto por GetJobWithAnalysisByID
 // (uma vaga só) — sempre traz a análise mais recente de cada vaga (se houver).
 const jobsWithAnalysisSelect = `
-	SELECT j.id, j.source, j.title, j.company, j.location, j.url, j.description, j.salary, j.found_at, j.status,
+	SELECT j.id, j.source, j.title, j.company, j.location, j.url, j.description, j.salary, j.found_at, j.status, j.location_restriction, j.salary_min, j.salary_max, j.salary_currency, j.salary_period,
 	       COALESCE(a.id, ''), COALESCE(a.fit_score, 0), COALESCE(a.summary, ''), COALESCE(a.benefits, ''), COALESCE(a.fit_reasoning, ''),
 	       COALESCE(a.resume_pdf_path, ''), COALESCE(a.resume_keywords, ''), COALESCE(a.resume_points, '')
 	FROM jobs j
@@ -312,7 +382,7 @@ func scanJobWithAnalysis(row rowScanner) (JobWithAnalysis, error) {
 	var item JobWithAnalysis
 	var analysisID string
 	if err := row.Scan(
-		&item.ID, &item.Source, &item.Title, &item.Company, &item.Location, &item.URL, &item.Description, &item.Salary, &item.FoundAt, &item.Status,
+		&item.ID, &item.Source, &item.Title, &item.Company, &item.Location, &item.URL, &item.Description, &item.Salary, &item.FoundAt, &item.Status, &item.LocationRestriction, &item.SalaryMin, &item.SalaryMax, &item.SalaryCurrency, &item.SalaryPeriod,
 		&analysisID, &item.FitScore, &item.Summary, &item.Benefits, &item.FitReasoning,
 		&item.ResumePDFPath, &item.ResumeKeywords, &item.ResumePoints,
 	); err != nil {
@@ -405,9 +475,9 @@ func (db *DB) CountJobsByStatus() (map[string]int, error) {
 func (db *DB) GetJobByID(id string) (models.Job, models.Analysis, error) {
 	var job models.Job
 	err := db.conn.QueryRow(
-		`SELECT id, source, title, company, location, url, description, salary, found_at, status FROM jobs WHERE id = ?`,
+		`SELECT id, source, title, company, location, url, description, salary, found_at, status, location_restriction, salary_min, salary_max, salary_currency, salary_period FROM jobs WHERE id = ?`,
 		id,
-	).Scan(&job.ID, &job.Source, &job.Title, &job.Company, &job.Location, &job.URL, &job.Description, &job.Salary, &job.FoundAt, &job.Status)
+	).Scan(&job.ID, &job.Source, &job.Title, &job.Company, &job.Location, &job.URL, &job.Description, &job.Salary, &job.FoundAt, &job.Status, &job.LocationRestriction, &job.SalaryMin, &job.SalaryMax, &job.SalaryCurrency, &job.SalaryPeriod)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return models.Job{}, models.Analysis{}, fmt.Errorf("vaga %q não encontrada: %w", id, err)
