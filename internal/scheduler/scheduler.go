@@ -102,6 +102,29 @@ func (s *Scheduler) LastRun() (time.Time, bool) {
 	return s.lastRun, !s.lastRun.IsZero()
 }
 
+// registerAnalysisFailure contabiliza uma falha de análise da vaga e avisa
+// quando ela atinge o limite de tentativas — a partir daí o pipeline deixa
+// de retentá-la (ainda dá pra analisar manualmente pelo dashboard).
+func (s *Scheduler) registerAnalysisFailure(j models.Job, analyzeErr error) {
+	attempts, err := s.db.IncrementAnalysisAttempts(j.ID)
+	if err != nil {
+		slog.Warn("pipeline: falha ao analisar vaga", "title", j.Title, "error", analyzeErr)
+		slog.Error("pipeline: falha ao registrar tentativa de análise", "title", j.Title, "error", err)
+		return
+	}
+
+	slog.Warn("pipeline: falha ao analisar vaga",
+		"title", j.Title,
+		"tentativa", attempts,
+		"max_tentativas", s.cfg.MaxAnalysisAttempts,
+		"error", analyzeErr,
+	)
+	if s.cfg.MaxAnalysisAttempts > 0 && attempts >= s.cfg.MaxAnalysisAttempts {
+		slog.Warn("pipeline: limite de tentativas atingido, vaga não será mais reanalisada automaticamente",
+			"title", j.Title, "url", j.URL, "tentativas", attempts)
+	}
+}
+
 // runPipeline executa um ciclo completo: crawl de todas as fontes
 // habilitadas, dedup e persistência das vagas novas, análise de fit via LLM
 // e notificação no Telegram das vagas que atingirem o fit_score mínimo
@@ -135,7 +158,7 @@ func (s *Scheduler) runPipeline() {
 	}
 
 	bySource := make(map[string]int)
-	var newJobs []models.Job
+	var novas int
 	for _, j := range jobs {
 		bySource[j.Source]++
 		if j.URL == "" || s.db.JobExistsByURL(j.URL) {
@@ -145,19 +168,33 @@ func (s *Scheduler) runPipeline() {
 			slog.Warn("pipeline: falha ao salvar vaga", "url", j.URL, "error", err)
 			continue
 		}
-		newJobs = append(newJobs, j)
+		novas++
 	}
-	slog.Info("pipeline: crawlers concluídos", "total_vagas", len(jobs), "novas_vagas", len(newJobs), "por_fonte", bySource)
+	slog.Info("pipeline: crawlers concluídos", "total_vagas", len(jobs), "novas_vagas", novas, "por_fonte", bySource)
 
-	var analisadas, comFitAlto int
+	var pendentes, analisadas, comFitAlto int
 
 	if s.cfg.OmniRouteAPIKey == "" {
 		slog.Warn("pipeline: omniroute_api_key não configurada — pulando análise")
 	} else {
-		for _, j := range newJobs {
+		// Analisa toda vaga sem análise no banco, não só as inseridas neste
+		// ciclo: assim vagas cuja análise falhou antes (erro do LLM, API key
+		// ausente etc.) são retentadas em vez de ficarem órfãs para sempre.
+		pending, err := s.db.GetPendingAnalysisJobs(s.cfg.MaxAnalysesPerCycle, s.cfg.MaxAnalysisAttempts)
+		if err != nil {
+			slog.Error("pipeline: falha ao buscar vagas pendentes de análise", "error", err)
+		}
+		pendentes = len(pending)
+		slog.Info("pipeline: analisando vagas pendentes",
+			"pendentes", pendentes,
+			"limite_por_ciclo", s.cfg.MaxAnalysesPerCycle,
+			"max_tentativas", s.cfg.MaxAnalysisAttempts,
+		)
+
+		for _, j := range pending {
 			analysis, err := s.analyzer.AnalyzeJob("profile.md", j)
 			if err != nil {
-				slog.Warn("pipeline: falha ao analisar vaga", "title", j.Title, "error", err)
+				s.registerAnalysisFailure(j, err)
 				continue
 			}
 			id, err := s.db.InsertAnalysis(analysis)
@@ -183,7 +220,8 @@ func (s *Scheduler) runPipeline() {
 	slog.Info("pipeline: ciclo concluído",
 		"duracao", time.Since(start),
 		"vagas_encontradas", len(jobs),
-		"vagas_novas", len(newJobs),
+		"vagas_novas", novas,
+		"vagas_pendentes", pendentes,
 		"vagas_analisadas", analisadas,
 		"vagas_com_fit_alto", comFitAlto,
 	)

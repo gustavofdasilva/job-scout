@@ -45,6 +45,16 @@ telegram_chat_id: ""
 # Se omitido (ou 0), usa o mesmo valor de min_fit_score.
 telegram_min_score: 0
 
+# Máximo de vagas pendentes de análise (novas ou que falharam em ciclos
+# anteriores) enviadas ao LLM por ciclo. Se omitido (ou 0), usa 50.
+# Valor negativo desativa o limite.
+max_analyses_per_cycle: 50
+
+# Quantas vezes a análise de uma mesma vaga pode falhar antes de o pipeline
+# desistir dela (ainda dá pra analisá-la manualmente pelo dashboard).
+# Se omitido (ou 0), usa 3. Valor negativo desativa o limite.
+max_analysis_attempts: 3
+
 # Lista de crawlers configurados. Cada crawler busca vagas em uma fonte
 # específica (ex: site de empregos) usando os termos de busca informados.
 crawlers:

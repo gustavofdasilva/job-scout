@@ -88,6 +88,9 @@ CREATE TABLE IF NOT EXISTS profile (
 	if err := addColumnIfMissing(db.conn, "analyses", "resume_points", "TEXT"); err != nil {
 		return err
 	}
+	if err := addColumnIfMissing(db.conn, "jobs", "analysis_attempts", "INTEGER NOT NULL DEFAULT 0"); err != nil {
+		return err
+	}
 
 	return nil
 }
@@ -146,6 +149,68 @@ func (db *DB) JobExistsByURL(url string) bool {
 		return false
 	}
 	return count > 0
+}
+
+// GetPendingAnalysisJobs retorna as vagas que ainda não têm nenhuma análise,
+// das mais recentes para as mais antigas. Inclui tanto vagas recém-inseridas
+// quanto vagas de ciclos anteriores cuja análise falhou (erro do LLM, API key
+// ausente etc.), que de outra forma nunca seriam analisadas porque o dedup
+// por URL as considera "já existentes". Vagas que já falharam maxAttempts
+// vezes são ignoradas, pra uma vaga que sempre falha não ser retentada para
+// sempre. limit <= 0 e maxAttempts <= 0 desativam o respectivo limite.
+func (db *DB) GetPendingAnalysisJobs(limit, maxAttempts int) ([]models.Job, error) {
+	query := `
+		SELECT j.id, j.source, j.title, j.company, j.location, j.url, j.description, j.salary, j.found_at, j.status
+		FROM jobs j
+		WHERE NOT EXISTS (SELECT 1 FROM analyses a WHERE a.job_id = j.id)
+	`
+	args := []any{}
+	if maxAttempts > 0 {
+		query += " AND j.analysis_attempts < ?"
+		args = append(args, maxAttempts)
+	}
+	query += " ORDER BY j.found_at DESC"
+	if limit > 0 {
+		query += " LIMIT ?"
+		args = append(args, limit)
+	}
+
+	rows, err := db.conn.Query(query, args...)
+	if err != nil {
+		return nil, fmt.Errorf("erro ao buscar vagas pendentes de análise: %w", err)
+	}
+	defer rows.Close()
+
+	var jobs []models.Job
+	for rows.Next() {
+		var j models.Job
+		if err := rows.Scan(&j.ID, &j.Source, &j.Title, &j.Company, &j.Location, &j.URL, &j.Description, &j.Salary, &j.FoundAt, &j.Status); err != nil {
+			return nil, fmt.Errorf("erro ao ler vaga pendente de análise: %w", err)
+		}
+		jobs = append(jobs, j)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, fmt.Errorf("erro ao iterar vagas pendentes de análise: %w", err)
+	}
+
+	return jobs, nil
+}
+
+// IncrementAnalysisAttempts registra mais uma tentativa de análise que falhou
+// para a vaga e retorna o total de tentativas após o incremento.
+func (db *DB) IncrementAnalysisAttempts(jobID string) (int, error) {
+	var attempts int
+	err := db.conn.QueryRow(
+		`UPDATE jobs SET analysis_attempts = analysis_attempts + 1 WHERE id = ? RETURNING analysis_attempts`,
+		jobID,
+	).Scan(&attempts)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return 0, fmt.Errorf("vaga %q não encontrada", jobID)
+		}
+		return 0, fmt.Errorf("erro ao incrementar tentativas de análise da vaga %q: %w", jobID, err)
+	}
+	return attempts, nil
 }
 
 // LatestJobFoundAt retorna o found_at mais recente entre as vagas de uma
