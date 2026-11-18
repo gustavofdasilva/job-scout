@@ -118,17 +118,19 @@ func buildCrawlerEntries(crawlers []config.Crawler, db *storage.DB) []crawler.En
 		"lever":          func(c config.Crawler) crawler.Crawler { return crawler.NewLeverCrawler(c.Companies, c.SearchTerms) },
 		"hackernews":     func(c config.Crawler) crawler.Crawler { return crawler.NewHackerNewsCrawler(db, c.SearchTerms) },
 		"ashby":          func(c config.Crawler) crawler.Crawler { return crawler.NewAshbyCrawler(c.Companies, c.SearchTerms) },
-		"greenhouse":     func(c config.Crawler) crawler.Crawler { return crawler.NewGreenhouseCrawler(c.Companies, c.SearchTerms) },
-		"himalayas":      func(c config.Crawler) crawler.Crawler { return crawler.NewHimalayasCrawler() },
-		"jobicy":         func(c config.Crawler) crawler.Crawler { return crawler.NewJobicyCrawler() },
-		"getonbrd":       func(c config.Crawler) crawler.Crawler { return crawler.NewGetOnBoardCrawler() },
-		"workable":       func(c config.Crawler) crawler.Crawler { return crawler.NewWorkableCrawler(c.Companies, c.SearchTerms) },
-		"workingnomads":  func(c config.Crawler) crawler.Crawler { return crawler.NewWorkingNomadsCrawler(c.SearchTerms) },
-		"arbeitnow":      func(c config.Crawler) crawler.Crawler { return crawler.NewArbeitnowCrawler(c.SearchTerms) },
-		"ycombinator":    func(c config.Crawler) crawler.Crawler { return crawler.NewYCombinatorCrawler(c.SearchTerms) },
+		"greenhouse": func(c config.Crawler) crawler.Crawler {
+			return crawler.NewGreenhouseCrawler(c.Companies, c.SearchTerms)
+		},
+		"workable": func(c config.Crawler) crawler.Crawler { return crawler.NewWorkableCrawler(c.Companies, c.SearchTerms) },
 		"smartrecruiters": func(c config.Crawler) crawler.Crawler {
 			return crawler.NewSmartRecruitersCrawler(c.Companies, c.SearchTerms)
 		},
+		"himalayas":     func(c config.Crawler) crawler.Crawler { return crawler.NewHimalayasCrawler() },
+		"jobicy":        func(c config.Crawler) crawler.Crawler { return crawler.NewJobicyCrawler() },
+		"workingnomads": func(c config.Crawler) crawler.Crawler { return crawler.NewWorkingNomadsCrawler(c.SearchTerms) },
+		"arbeitnow":     func(c config.Crawler) crawler.Crawler { return crawler.NewArbeitnowCrawler(c.SearchTerms) },
+		"getonbrd":      func(c config.Crawler) crawler.Crawler { return crawler.NewGetOnBoardCrawler() },
+		"ycombinator":   func(c config.Crawler) crawler.Crawler { return crawler.NewYCombinatorCrawler(c.SearchTerms) },
 		// Remotive: desativado por padrão no example.config.yaml — ver o
 		// comentário em internal/crawler/remotive.go sobre os termos de uso.
 		"remotive": func(c config.Crawler) crawler.Crawler { return crawler.NewRemotiveCrawler() },
