@@ -225,6 +225,15 @@ crawlers:
     # Sem busca na API: filtra título/tags e só mantém vagas remotas.
     search_terms: ["golang", "backend", "back-end", "software engineer"]
     max_pages: 2 # 300 vagas por página
+  - name: remotive
+    # Desativado por padrão: os termos da API exigem atribuição (link de
+    # volta e menção ao Remotive), as vagas chegam com 24h de atraso e o
+    # robots.txt restringe acesso automatizado — o aviso da API pede no
+    # máximo ~4 requests por dia. Ative só se o schedule rodar poucas vezes
+    # ao dia, com poucos search_terms.
+    enabled: false
+    search_terms: ["golang", "backend"]
+    max_pages: 1 # ignorado — até 50 vagas por search_term
   # --- LatAm → gringo ----------------------------------------------------
   - name: getonbrd
     enabled: true

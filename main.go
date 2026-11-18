@@ -129,6 +129,12 @@ func buildCrawlerEntries(crawlers []config.Crawler, db *storage.DB) []crawler.En
 		"smartrecruiters": func(c config.Crawler) crawler.Crawler {
 			return crawler.NewSmartRecruitersCrawler(c.Companies, c.SearchTerms)
 		},
+		// Remotive: desativado por padrão no example.config.yaml — ver o
+		// comentário em internal/crawler/remotive.go sobre os termos de uso.
+		"remotive": func(c config.Crawler) crawler.Crawler { return crawler.NewRemotiveCrawler() },
+		// Torre.ai: não implementado — a busca (POST search.torre.co/
+		// opportunities/_search) respondeu 400 "Invalid request" a todos os
+		// payloads testados em nov/2026 e não tem documentação pública.
 		// TODO: Wellfound (ex-AngelList) — não implementado: o site fica atrás
 		// de Cloudflare pesado e não tem API pública.
 	}
