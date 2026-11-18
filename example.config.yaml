@@ -200,6 +200,16 @@ crawlers:
     search_terms: ["golang", "backend", "software engineer"] # usados como ?tag=
     max_pages: 2 # 50 vagas por página
 
+  - name: workingnomads
+    enabled: true
+    # Feed sem busca: filtra título/tags/categoria pelos termos.
+    search_terms: ["golang", "backend", "back-end", "software engineer", "developer"]
+    max_pages: 1 # ignorado — o feed vem inteiro numa request
+  - name: arbeitnow
+    enabled: true
+    # Sem busca na API: filtra título/tags e só mantém vagas remotas.
+    search_terms: ["golang", "backend", "back-end", "software engineer"]
+    max_pages: 2 # 300 vagas por página
   # --- LatAm → gringo ----------------------------------------------------
   - name: getonbrd
     enabled: true
