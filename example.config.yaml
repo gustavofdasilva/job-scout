@@ -177,3 +177,9 @@ crawlers:
       - cockroachlabs
       - planetscale
       - pagerduty
+
+  # --- Boards remotos com API JSON pública -------------------------------
+  - name: himalayas
+    enabled: true
+    search_terms: ["golang", "backend engineer", "software engineer"]
+    max_pages: 3 # 20 vagas por página

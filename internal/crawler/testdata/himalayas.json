@@ -1,0 +1,224 @@
+{
+ "comments": "Search results come 20 to a page. Pass ?page=2, ?page=3 and so on for more; there is no cursor on search. Cursor pagination (nextCursor) is only on /jobs/api, the browse feed. 13/03/2026: The API has been updated to include the companySlug field in the response.",
+ "updatedAt": 1793538682,
+ "offset": 0,
+ "limit": 20,
+ "totalCount": 178,
+ "jobs": [
+  {
+   "title": "Golang Dev",
+   "excerpt": "Job DescriptionYour responsibilities would include• Create scalable and automated solutions for problems.",
+   "companyName": "Supersourcing",
+   "companySlug": "supersourcing",
+   "companyLogo": "https://cdn-images.himalayas.app/jrr23hb7glax4vcuto33eyv8p9vf",
+   "employmentType": "Full Time",
+   "minSalary": null,
+   "maxSalary": null,
+   "salaryPeriod": "annual",
+   "seniority": [
+    "Mid-level"
+   ],
+   "currency": null,
+   "locationRestrictions": [
+    "India"
+   ],
+   "timezoneRestrictions": [
+    5.5
+   ],
+   "categories": [
+    "Golang-Developer",
+    "Backend-Engineer",
+    "Go-Developer",
+    "Software-Engineer",
+    "Golang-Development",
+    "Go-Golang-Developer",
+    "Go-Golang-Development",
+    "GoLang-Engineer",
+    "Golang-Software-Engineer",
+    "Golang-Engineering",
+    "Developer"
+   ],
+   "parentCategories": [
+    "Developer"
+   ],
+   "description": "<h3>Job Description</h3><h3>Your responsibilities would include</h3><ul>\n<li>Create scalable and automated solutions for problems.</li>\n<li>Write well tested, auto-testable, auto-deployable code.</li>\n<li>Own multiple projects, lead and manage teams with help from Team Leads and senior developers, and own communication with the customers</li>\n</ul><h3>On a typical day you would</h3><ul>\n<li>Take the projects ahead on the technical goals.</li>\n<li>Mentor the other relatively junior members of the team.</li>\n<li>Help in growing your team and other teams in the organization by participating in the Hiring activities.</li>\n<li>Ensure effective translation of customer requirements, and business needs to technical solutions.\\</li>\n</ul><h3>About your work and team</h3><p>You will guide multiple teams on customer projects. In parallel you will work directly with at least one team of</p><p>senior and junior Developers, helped by a Scrum Master to manage the agile ceremonies, working towards</p><p>quarterly (rolling to annual) targets of the business for the Product and Business owners. Work with offshore and</p><p>onshore Software Architects, and act like one if possible, to help the teams ",
+   "pubDate": 1791744622,
+   "expiryDate": 1796928622,
+   "applicationLink": "https://himalayas.app/companies/supersourcing/jobs/golang-dev?utm_source=api",
+   "guid": "https://himalayas.app/companies/supersourcing/jobs/golang-dev"
+  },
+  {
+   "title": "Golang Developer",
+   "excerpt": "Job Title: Golang DeveloperExperience: 4 to 8 Years Work Mode: Remote Key Skills:• Strong hands-on experience with Golang • JavaScript experience preferred (Node.",
+   "companyName": "Pontoonglobal",
+   "companySlug": "pontoonglobal",
+   "companyLogo": "https://cdn-images.himalayas.app/19vp1tj2hiu3u6c0ayy4u95l8ca4",
+   "employmentType": "Full Time",
+   "minSalary": 600000,
+   "maxSalary": 1500000,
+   "salaryPeriod": "annual",
+   "seniority": [
+    "Mid-level"
+   ],
+   "currency": "INR",
+   "locationRestrictions": [
+    "United States"
+   ],
+   "timezoneRestrictions": [
+    -10,
+    -9,
+    -8,
+    -7,
+    -6,
+    -5,
+    14
+   ],
+   "categories": [
+    "Golang-Developer",
+    "Backend-Engineer",
+    "Software-Engineer",
+    "Go-Engineer",
+    "Go-Golang-Developer",
+    "Go-Developer",
+    "GoLang-Engineer",
+    "Golang-Software-Engineer",
+    "Golang-Development",
+    "Go-Golang-Development",
+    "Developer"
+   ],
+   "parentCategories": [
+    "Developer"
+   ],
+   "description": "<h3><strong>Job Title: Golang Developer</strong></h3><p><strong>Experience:</strong> 4 to 8 Years<br><strong>Work Mode:</strong> Remote</p><h4><strong>Key Skills:</strong></h4><ul>\n<li><p>Strong hands-on experience with <strong>Golang</strong></p></li>\n<li><p><strong>JavaScript</strong> experience preferred (Node.js / frontend frameworks a plus)</p></li>\n<li><p>Knowledge of <strong>Python</strong> is an added advantage</p></li>\n<li><p>Experience with REST APIs, Microservices &amp; Cloud environments</p></li>\n<li><p>Familiarity with Docker/Kubernetes is a plus</p></li>\n</ul><h4><strong>Responsibilities:</strong></h4><ul>\n<li><p>Design, develop, and maintain scalable backend services using Golang</p></li>\n<li><p>Work with JavaScript-based systems or tools when required</p></li>\n<li><p>Collaborate with cross-functional teams to implement new features</p></li>\n<li><p>Debug, optimize, and improve system performance</p></li>\n<li><p>Participate in code reviews and contribute to best practices</p></li>\n</ul><p>Originally posted on <a href=\"https://himalayas.app\">Himalayas</a></p>",
+   "pubDate": 1793265477,
+   "expiryDate": 1796889569,
+   "applicationLink": "https://himalayas.app/companies/pontoonglobal/jobs/golang-developer?utm_source=api",
+   "guid": "https://himalayas.app/companies/pontoonglobal/jobs/golang-developer"
+  },
+  {
+   "title": "GoLang Developer",
+   "excerpt": "Job Description:We are looking for a skilled and passionate Golang Developer with expertise in various technologies such as JavaScript, PostgreSQL, GCP or AWS, HTML, CSS, and Tailwind.",
+   "companyName": "Supersourcing",
+   "companySlug": "supersourcing",
+   "companyLogo": "https://cdn-images.himalayas.app/jrr23hb7glax4vcuto33eyv8p9vf",
+   "employmentType": "Full Time",
+   "minSalary": null,
+   "maxSalary": null,
+   "salaryPeriod": "annual",
+   "seniority": [
+    "Mid-level"
+   ],
+   "currency": null,
+   "locationRestrictions": [
+    "United States"
+   ],
+   "timezoneRestrictions": [
+    -10,
+    -9,
+    -8,
+    -7,
+    -6,
+    -5,
+    14
+   ],
+   "categories": [
+    "Golang-Developer",
+    "Backend-Engineer",
+    "Go-Developer",
+    "Software-Engineer",
+    "Go-Golang-Developer",
+    "GoLang-Engineer",
+    "Golang-Software-Engineer",
+    "Golang-Development",
+    "Go-Golang-Development",
+    "Developer"
+   ],
+   "parentCategories": [
+    "Developer"
+   ],
+   "description": "<p>Job Description:We are looking for a skilled and passionate Golang Developer with expertise in various technologies such as JavaScript, PostgreSQL, GCP or AWS, HTML, CSS, and Tailwind. As a Golang Developer, you will be responsible for developing and maintaining backend applications using the Go programming language. You will collaborate with cross-functional teams to deliver high-quality software solutions that meet business requirements.</p><h3>Responsibilities:</h3><ul>\n<li>Develop and maintain backend applications using the Go programming language.</li>\n<li>Collaborate with frontend developers, designers, and project managers to define, design, and implement new features.</li>\n<li>Write clean, efficient, and maintainable code in Golang.</li>\n<li>Design and implement RESTful APIs for seamless integration with frontend applications.</li>\n<li>Integrate third-party services and APIs into the backend architecture.</li>\n<li>Ensure the performance, scalability, and security of backend applications.</li>\n<li>Troubleshoot and debug issues, and propose effective solutions.</li>\n<li>Stay up to date with the latest industry trends and technologies related to Golang development.</li>\n<li",
+   "pubDate": 1791737294,
+   "expiryDate": 1796921294,
+   "applicationLink": "https://himalayas.app/companies/supersourcing/jobs/golang-developer-4806317598?utm_source=api",
+   "guid": "https://himalayas.app/companies/supersourcing/jobs/golang-developer-4806317598"
+  },
+  {
+   "title": "Golang Engineer",
+   "excerpt": "Canonical is a leading provider of open-source software and operating systems for global enterprise and technology markets.",
+   "companyName": "Canonical",
+   "companySlug": "canonical",
+   "companyLogo": "https://cdn-images.himalayas.app/re8q1jo71m4lmph4ozuxybpu8nei",
+   "employmentType": "Full Time",
+   "minSalary": null,
+   "maxSalary": null,
+   "salaryPeriod": "annual",
+   "seniority": [
+    "Mid-level"
+   ],
+   "currency": null,
+   "locationRestrictions": [],
+   "timezoneRestrictions": [
+    -11,
+    -10,
+    -9.5,
+    -9,
+    -8,
+    -7,
+    -6,
+    -5,
+    -4,
+    -3.5,
+    -3,
+    -2,
+    -1,
+    0,
+    1,
+    2,
+    3,
+    3.5,
+    4,
+    4.5,
+    5,
+    5.5,
+    5.75,
+    6,
+    6.5,
+    7,
+    8,
+    8.75,
+    9,
+    9.5,
+    10,
+    10.5,
+    11,
+    12,
+    12.75,
+    13,
+    14
+   ],
+   "categories": [
+    "Software-Engineer",
+    "Backend-Development",
+    "Golang-Development",
+    "Linux-Engineering",
+    "Engineering-Fast-Track",
+    "GoLang-Engineer",
+    "Golang-Software-Engineer",
+    "Golang-Engineering",
+    "Go-Engineer",
+    "Golang-Developer",
+    "Go-Golang-Developer",
+    "GoLang-Backend-Engineer",
+    "Go-Application-Engineer"
+   ],
+   "parentCategories": [
+    "Developer"
+   ],
+   "description": "<p><a href=\"https://himalayas.app/companies/canonical\">Canonical</a> is a leading provider of open-source software and operating systems for global enterprise and technology markets. Our platform, Ubuntu, is very widely used in breakthrough enterprise initiatives such as public cloud, data science, AI, engineering innovation and IoT. Our customers include the world's leading public cloud and silicon providers, and industry leaders in many sectors. The company is a pioneer of global distributed collaboration, with 1200+ colleagues in more than 80 countries and very few office-based roles. Teams meet two to four times yearly in person, in interesting locations around the world, to align on strategy and execution.</p><p>The company is founder led, profitable and growing.</p><p>We are hiring <strong>Golang engineers</strong> of all levels of seniority, for all relevant teams at <a href=\"https://himalayas.app/companies/canonical\">Canonical</a>. Apply here if you are an exceptional software engineer who prefers to work in Go. After the first round of interviews we’ll find the best fit product team at <a href=\"https://himalayas.app/companies/canonical\">Canonical</a> for you to progress yo",
+   "pubDate": 1789842948,
+   "expiryDate": 1795026947,
+   "applicationLink": "https://himalayas.app/companies/canonical/jobs/golang-engineer?utm_source=api",
+   "guid": "https://himalayas.app/companies/canonical/jobs/golang-engineer"
+  }
+ ]
+}
