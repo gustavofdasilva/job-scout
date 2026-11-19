@@ -75,6 +75,12 @@ func (s *Server) routes() {
 	s.mux.HandleFunc("POST /api/jobs/{id}/status", s.handleUpdateStatus)
 	s.mux.HandleFunc("POST /api/trigger", s.handleTrigger)
 	s.mux.HandleFunc("GET /api/status", s.handleStatus)
+	s.mux.HandleFunc("GET /api/ping", s.handlePing)
+}
+
+// handlePing responde a checagens simples de disponibilidade do servidor.
+func (s *Server) handlePing(w http.ResponseWriter, r *http.Request) {
+	writeJSON(w, http.StatusOK, map[string]string{"message": "pong"})
 }
 
 func (s *Server) handleListJobs(w http.ResponseWriter, r *http.Request) {
