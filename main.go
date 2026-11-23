@@ -20,6 +20,7 @@ import (
 	"job-scout/internal/scheduler"
 	"job-scout/internal/server"
 	"job-scout/internal/storage"
+	"job-scout/internal/titlefilter"
 )
 
 const resumeOutputDir = "data/resumes"
@@ -61,7 +62,20 @@ func main() {
 		slog.Warn("telegram: bot_token ou chat_id não configurados — notificações desabilitadas")
 	}
 
-	sched := scheduler.NewScheduler(cfg, db, orchestrator, az, telegram)
+	titleFilter, err := titlefilter.New(cfg.TitleExclude, cfg.TitleRequire)
+	if err != nil {
+		slog.Error("falha ao carregar filtro de título", "error", err)
+		os.Exit(1)
+	}
+
+	sched := scheduler.NewScheduler(cfg, db, orchestrator, az, telegram, titleFilter)
+	// Aplica o filtro de título já na subida, pra vagas que estavam
+	// pendentes antes de ele existir não esperarem o próximo ciclo.
+	if filtered, pending, err := sched.FilterPendingByTitle(); err != nil {
+		slog.Error("falha ao aplicar filtro de título às vagas pendentes", "error", err)
+	} else {
+		slog.Info("filtro de título aplicado às vagas pendentes", "filtradas", filtered, "pendentes_para_llm", pending)
+	}
 	if err := sched.Run(); err != nil {
 		slog.Error("falha ao iniciar scheduler", "error", err)
 		os.Exit(1)

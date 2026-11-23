@@ -6,6 +6,14 @@ import (
 	"unicode"
 )
 
+// Status de vaga.
+const (
+	JobStatusNew = "new"
+	// JobStatusFiltered marca vagas descartadas pelo filtro de título
+	// (title_exclude/title_require) sem passar pelo LLM.
+	JobStatusFiltered = "filtered"
+)
+
 // Job representa uma vaga encontrada por um crawler.
 type Job struct {
 	ID          string    `json:"id"`

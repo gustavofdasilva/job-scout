@@ -60,11 +60,11 @@ func TestPendingAnalysisAttempts(t *testing.T) {
 			t.Fatalf("tentativa %d: n=%d err=%v", i, n, err)
 		}
 	}
-	pending, err := db.GetPendingAnalysisJobs(50, 3)
+	pending, err := db.GetPendingAnalysisJobs(50, 3, nil)
 	if err != nil || len(pending) != 1 || pending[0].ID != "b" {
 		t.Fatalf("pendentes com limite: %+v err=%v", pending, err)
 	}
-	pending, _ = db.GetPendingAnalysisJobs(50, -1)
+	pending, _ = db.GetPendingAnalysisJobs(50, -1, nil)
 	if len(pending) != 2 {
 		t.Fatalf("pendentes sem limite: %d", len(pending))
 	}
@@ -218,5 +218,50 @@ func TestJobsWithAnalysisPaginationAndFilters(t *testing.T) {
 	}
 	if counts["new"] != 3 || counts["applied"] != 1 || len(counts) != 2 {
 		t.Fatalf("contagem por status: %v", counts)
+	}
+}
+
+func TestPendingAnalysisPriorityAndFiltered(t *testing.T) {
+	db := openTestDB(t)
+	base := time.Date(2026, 11, 1, 0, 0, 0, 0, time.UTC)
+	seed := []struct {
+		id, source string
+		age        time.Duration
+	}{
+		{"gupy-new", "gupy", 0},
+		{"lever-old", "lever", 48 * time.Hour},
+		{"ashby-mid", "ashby", 24 * time.Hour},
+		{"sales", "lever", 0},
+	}
+	for _, s := range seed {
+		if err := db.InsertJob(models.Job{ID: s.id, Source: s.source, Title: s.id, Company: "c", URL: "u" + s.id, FoundAt: base.Add(-s.age)}); err != nil {
+			t.Fatal(err)
+		}
+	}
+	if n, err := db.MarkJobsFiltered([]string{"sales"}); err != nil || n != 1 {
+		t.Fatalf("MarkJobsFiltered: n=%d err=%v", n, err)
+	}
+
+	pending, err := db.GetPendingAnalysisJobs(0, 3, []string{"lever", "ashby"})
+	if err != nil {
+		t.Fatal(err)
+	}
+	var got []string
+	for _, j := range pending {
+		got = append(got, j.ID)
+	}
+	if strings.Join(got, ",") != "ashby-mid,lever-old,gupy-new" {
+		t.Fatalf("ordem das pendentes: %v", got)
+	}
+	if n, _ := db.CountPendingAnalysisJobs(3); n != 3 {
+		t.Fatalf("CountPendingAnalysisJobs = %d, esperava 3", n)
+	}
+
+	// Filtradas não aparecem em "todas", só pedindo o status.
+	if _, total, _ := db.GetJobsWithAnalysis(JobFilter{}); total != 3 {
+		t.Fatalf("todas: total=%d, esperava 3", total)
+	}
+	if _, total, _ := db.GetJobsWithAnalysis(JobFilter{Status: models.JobStatusFiltered}); total != 1 {
+		t.Fatalf("filtradas: total=%d, esperava 1", total)
 	}
 }

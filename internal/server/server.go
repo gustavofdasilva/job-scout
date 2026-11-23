@@ -36,6 +36,8 @@ var validStatuses = map[string]bool{
 	"reviewed": true,
 	"applied":  true,
 	"ignored":  true,
+	// Descartada pelo filtro de título (title_exclude/title_require).
+	"filtered": true,
 }
 
 // Server expõe a API HTTP e o dashboard do job-scout.

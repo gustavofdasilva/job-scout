@@ -46,7 +46,38 @@ type Config struct {
 	// falhar antes de o pipeline desistir dela. Se omitido (zero), usa
 	// defaultMaxAnalysisAttempts; negativo desativa o limite.
 	MaxAnalysisAttempts int `yaml:"max_analysis_attempts"`
+
+	// TitleExclude e TitleRequire filtram vagas pelo título antes da
+	// análise (ver internal/titlefilter): casar com algum padrão de
+	// TitleExclude, ou não casar com nenhum de TitleRequire, marca a vaga
+	// como "filtered" sem chamar o LLM. Omitidos, usam
+	// defaultTitleExclude/defaultTitleRequire; uma lista vazia ([])
+	// desativa a regra.
+	TitleExclude []string `yaml:"title_exclude"`
+	TitleRequire []string `yaml:"title_require"`
+
+	// PrioritySources são as fontes (ATS e boards remotos) cujas vagas
+	// pendentes vão primeiro para o LLM; dentro de cada grupo, as mais
+	// recentes primeiro. Omitido, usa defaultPrioritySources.
+	PrioritySources []string `yaml:"priority_sources"`
 }
+
+var (
+	defaultTitleExclude = []string{
+		"sales", "account executive", "account manager", "recruiter", "recruiting", "talent acquisition",
+		"product manager", "marketing", "designer", "support specialist", "business development",
+		"director", "head of", "android", "ios", "mobile",
+	}
+	defaultTitleRequire = []string{
+		"engineer", "developer", "desenvolvedor", "desenvolvedora", "engenheiro", "engenheira",
+		"programador", "programadora", "sre", "devops", "backend", "back-end", "platform",
+	}
+	defaultPrioritySources = []string{
+		"ashby", "greenhouse", "lever", "workable", "smartrecruiters",
+		"himalayas", "jobicy", "workingnomads", "arbeitnow", "remotive",
+		"remoteok", "weworkremotely", "getonbrd", "ycombinator",
+	}
+)
 
 const (
 	defaultOmniRouteBaseURL = "http://localhost:20128/v1"
@@ -82,6 +113,16 @@ func Load(path string) (*Config, error) {
 	}
 	if cfg.MaxAnalysisAttempts == 0 {
 		cfg.MaxAnalysisAttempts = defaultMaxAnalysisAttempts
+	}
+	// nil = campo omitido no YAML; "[]" chega como slice vazio e desativa.
+	if cfg.TitleExclude == nil {
+		cfg.TitleExclude = defaultTitleExclude
+	}
+	if cfg.TitleRequire == nil {
+		cfg.TitleRequire = defaultTitleRequire
+	}
+	if cfg.PrioritySources == nil {
+		cfg.PrioritySources = defaultPrioritySources
 	}
 
 	return &cfg, nil

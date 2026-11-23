@@ -103,6 +103,7 @@
                 <option value="reviewed">Revisado</option>
                 <option value="applied">Aplicado</option>
                 <option value="ignored">Ignorar</option>
+                <option value="filtered">Filtrada</option>
               </select>
               <svg class="status-select-caret" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#888" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"></path></svg>
             </div>
@@ -202,6 +203,7 @@
           { key: 'reviewed', label: 'Revisadas' },
           { key: 'applied', label: 'Aplicadas' },
           { key: 'ignored', label: 'Ignoradas' },
+          { key: 'filtered', label: 'Filtradas' },
         ],
 
         async init() {
@@ -283,7 +285,7 @@
         tabLabel(t) {
           const counts = this.tabCounts;
           const n = t.key === 'todas'
-            ? Object.values(counts).reduce((a, b) => a + b, 0)
+            ? Object.entries(counts).reduce((a, [k, n]) => k === 'filtered' ? a : a + n, 0)
             : (counts[t.key] || 0);
           return `${t.label} ${n}`;
         },
@@ -409,7 +411,7 @@
         },
 
         statusLabel(v) {
-          return { new: 'Novo', reviewed: 'Revisado', applied: 'Aplicado', ignored: 'Ignorado' }[v] || v;
+          return { new: 'Novo', reviewed: 'Revisado', applied: 'Aplicado', ignored: 'Ignorado', filtered: 'Filtrada' }[v] || v;
         },
 
         scoreClass(job) {

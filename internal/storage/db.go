@@ -334,25 +334,37 @@ func (db *DB) JobExistsByDedupKey(key string) bool {
 	return count > 0
 }
 
-// GetPendingAnalysisJobs retorna as vagas que ainda não têm nenhuma análise,
-// das mais recentes para as mais antigas. Inclui tanto vagas recém-inseridas
-// quanto vagas de ciclos anteriores cuja análise falhou (erro do LLM, API key
-// ausente etc.), que de outra forma nunca seriam analisadas porque o dedup
-// por URL as considera "já existentes". Vagas que já falharam maxAttempts
-// vezes são ignoradas, pra uma vaga que sempre falha não ser retentada para
-// sempre. limit <= 0 e maxAttempts <= 0 desativam o respectivo limite.
-func (db *DB) GetPendingAnalysisJobs(limit, maxAttempts int) ([]models.Job, error) {
+// GetPendingAnalysisJobs retorna as vagas que ainda não têm nenhuma análise.
+// Inclui tanto vagas recém-inseridas quanto vagas de ciclos anteriores cuja
+// análise falhou (erro do LLM, API key ausente etc.), que de outra forma
+// nunca seriam analisadas porque o dedup por URL as considera "já
+// existentes". Vagas que já falharam maxAttempts vezes são ignoradas, pra
+// uma vaga que sempre falha não ser retentada para sempre, assim como as
+// descartadas pelo filtro de título. limit <= 0 e maxAttempts <= 0
+// desativam o respectivo limite.
+//
+// Ordem: primeiro as vagas de prioritySources (ATS e boards remotos), depois
+// as demais; em cada grupo, das mais recentes para as mais antigas.
+func (db *DB) GetPendingAnalysisJobs(limit, maxAttempts int, prioritySources []string) ([]models.Job, error) {
 	query := `
 		SELECT j.id, j.source, j.title, j.company, j.location, j.url, j.description, j.salary, j.found_at, j.status, j.location_restriction, j.salary_min, j.salary_max, j.salary_currency, j.salary_period
 		FROM jobs j
 		WHERE NOT EXISTS (SELECT 1 FROM analyses a WHERE a.job_id = j.id)
+		  AND j.status != ?
 	`
-	args := []any{}
+	args := []any{models.JobStatusFiltered}
 	if maxAttempts > 0 {
 		query += " AND j.analysis_attempts < ?"
 		args = append(args, maxAttempts)
 	}
-	query += " ORDER BY j.found_at DESC"
+	query += " ORDER BY "
+	if len(prioritySources) > 0 {
+		query += "CASE WHEN j.source IN (?" + strings.Repeat(", ?", len(prioritySources)-1) + ") THEN 0 ELSE 1 END, "
+		for _, s := range prioritySources {
+			args = append(args, s)
+		}
+	}
+	query += "j.found_at DESC"
 	if limit > 0 {
 		query += " LIMIT ?"
 		args = append(args, limit)
@@ -377,6 +389,83 @@ func (db *DB) GetPendingAnalysisJobs(limit, maxAttempts int) ([]models.Job, erro
 	}
 
 	return jobs, nil
+}
+
+// CountPendingAnalysisJobs conta as vagas que GetPendingAnalysisJobs
+// retornaria sem limite por ciclo.
+func (db *DB) CountPendingAnalysisJobs(maxAttempts int) (int, error) {
+	query := `SELECT COUNT(1) FROM jobs j
+		WHERE NOT EXISTS (SELECT 1 FROM analyses a WHERE a.job_id = j.id) AND j.status != ?`
+	args := []any{models.JobStatusFiltered}
+	if maxAttempts > 0 {
+		query += " AND j.analysis_attempts < ?"
+		args = append(args, maxAttempts)
+	}
+	var n int
+	if err := db.conn.QueryRow(query, args...).Scan(&n); err != nil {
+		return 0, fmt.Errorf("erro ao contar vagas pendentes de análise: %w", err)
+	}
+	return n, nil
+}
+
+// GetUnanalyzedNewJobTitles retorna id e título das vagas com status "new"
+// que ainda não têm análise — as candidatas ao filtro de título.
+func (db *DB) GetUnanalyzedNewJobTitles() ([]models.Job, error) {
+	rows, err := db.conn.Query(`
+		SELECT j.id, j.title FROM jobs j
+		WHERE j.status = ? AND NOT EXISTS (SELECT 1 FROM analyses a WHERE a.job_id = j.id)
+	`, models.JobStatusNew)
+	if err != nil {
+		return nil, fmt.Errorf("erro ao buscar vagas não analisadas: %w", err)
+	}
+	defer rows.Close()
+
+	var jobs []models.Job
+	for rows.Next() {
+		var j models.Job
+		if err := rows.Scan(&j.ID, &j.Title); err != nil {
+			return nil, fmt.Errorf("erro ao ler vaga não analisada: %w", err)
+		}
+		jobs = append(jobs, j)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, fmt.Errorf("erro ao iterar vagas não analisadas: %w", err)
+	}
+	return jobs, nil
+}
+
+// MarkJobsFiltered muda para "filtered" o status das vagas informadas, numa
+// transação só. Retorna quantas foram atualizadas.
+func (db *DB) MarkJobsFiltered(ids []string) (int, error) {
+	if len(ids) == 0 {
+		return 0, nil
+	}
+	tx, err := db.conn.Begin()
+	if err != nil {
+		return 0, fmt.Errorf("erro ao iniciar transação: %w", err)
+	}
+	defer tx.Rollback()
+
+	stmt, err := tx.Prepare(`UPDATE jobs SET status = ? WHERE id = ?`)
+	if err != nil {
+		return 0, fmt.Errorf("erro ao preparar atualização de status: %w", err)
+	}
+	defer stmt.Close()
+
+	var n int
+	for _, id := range ids {
+		res, err := stmt.Exec(models.JobStatusFiltered, id)
+		if err != nil {
+			return 0, fmt.Errorf("erro ao marcar vaga %q como filtrada: %w", id, err)
+		}
+		if affected, err := res.RowsAffected(); err == nil {
+			n += int(affected)
+		}
+	}
+	if err := tx.Commit(); err != nil {
+		return 0, fmt.Errorf("erro ao confirmar vagas filtradas: %w", err)
+	}
+	return n, nil
 }
 
 // IncrementAnalysisAttempts registra mais uma tentativa de análise que falhou
@@ -504,6 +593,8 @@ func scanJobWithAnalysis(row rowScanner) (JobWithAnalysis, error) {
 // JobFilter filtra e pagina a listagem de vagas do dashboard. Campos
 // zerados desativam o respectivo filtro; Limit <= 0 traz todas as vagas.
 type JobFilter struct {
+	// Status vazio lista todas as vagas menos as descartadas pelo filtro de
+	// título ("filtered"), que só aparecem pedindo esse status.
 	Status string
 	// MinScore só se aplica a vagas já analisadas: as ainda não analisadas
 	// continuam aparecendo (no fim da lista, com score 0), como o dashboard
@@ -520,9 +611,14 @@ type JobFilter struct {
 func (f JobFilter) where(withStatus bool) (string, []any) {
 	clause := " WHERE 1=1"
 	args := []any{}
-	if withStatus && f.Status != "" {
-		clause += " AND j.status = ?"
-		args = append(args, f.Status)
+	if withStatus {
+		if f.Status != "" {
+			clause += " AND j.status = ?"
+			args = append(args, f.Status)
+		} else {
+			clause += " AND j.status != ?"
+			args = append(args, models.JobStatusFiltered)
+		}
 	}
 	if f.MinScore > 0 {
 		clause += " AND (a.id IS NULL OR a.fit_score >= ?)"

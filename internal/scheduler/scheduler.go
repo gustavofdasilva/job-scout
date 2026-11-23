@@ -19,6 +19,7 @@ import (
 	"job-scout/internal/models"
 	"job-scout/internal/notifier"
 	"job-scout/internal/storage"
+	"job-scout/internal/titlefilter"
 )
 
 // Scheduler agenda a execução periódica do pipeline de acordo com a
@@ -29,6 +30,7 @@ type Scheduler struct {
 	orchestrator *crawler.Orchestrator
 	analyzer     *analyzer.Analyzer
 	telegram     *notifier.Telegram
+	titleFilter  *titlefilter.Filter
 
 	cron *cron.Cron
 	wg   sync.WaitGroup
@@ -40,15 +42,45 @@ type Scheduler struct {
 
 // NewScheduler cria um Scheduler com as dependências do pipeline já
 // resolvidas.
-func NewScheduler(cfg *config.Config, db *storage.DB, orchestrator *crawler.Orchestrator, az *analyzer.Analyzer, telegram *notifier.Telegram) *Scheduler {
+func NewScheduler(cfg *config.Config, db *storage.DB, orchestrator *crawler.Orchestrator, az *analyzer.Analyzer, telegram *notifier.Telegram, titleFilter *titlefilter.Filter) *Scheduler {
 	return &Scheduler{
 		cfg:          cfg,
 		db:           db,
 		orchestrator: orchestrator,
 		analyzer:     az,
 		telegram:     telegram,
+		titleFilter:  titleFilter,
 		cron:         cron.New(),
 	}
+}
+
+// FilterPendingByTitle marca como "filtered" as vagas novas ainda não
+// analisadas cujo título o filtro rejeita, pra elas não irem ao LLM nem
+// ocuparem o limite de análises por ciclo. Roda no início de cada ciclo e
+// na subida do servidor (pega também as vagas que já estavam pendentes).
+// Retorna quantas foram filtradas e quantas continuam pendentes de análise.
+func (s *Scheduler) FilterPendingByTitle() (filtered, pending int, err error) {
+	if s.titleFilter.Enabled() {
+		candidates, err := s.db.GetUnanalyzedNewJobTitles()
+		if err != nil {
+			return 0, 0, err
+		}
+		var ids []string
+		for _, j := range candidates {
+			if reason, reject := s.titleFilter.Reject(j.Title); reject {
+				slog.Debug("pipeline: vaga filtrada pelo título", "title", j.Title, "motivo", reason)
+				ids = append(ids, j.ID)
+			}
+		}
+		if filtered, err = s.db.MarkJobsFiltered(ids); err != nil {
+			return 0, 0, err
+		}
+	}
+	pending, err = s.db.CountPendingAnalysisJobs(s.cfg.MaxAnalysisAttempts)
+	if err != nil {
+		return filtered, 0, err
+	}
+	return filtered, pending, nil
 }
 
 // Run registra a expressão cron do config e inicia o agendador em segundo
@@ -174,6 +206,11 @@ func (s *Scheduler) runPipeline() {
 	}
 	slog.Info("pipeline: crawlers concluídos", "total_vagas", len(jobs), "novas_vagas", novas, "por_fonte", bySource)
 
+	filtradas, _, err := s.FilterPendingByTitle()
+	if err != nil {
+		slog.Error("pipeline: falha ao aplicar filtro de título", "error", err)
+	}
+
 	var pendentes, analisadas, comFitAlto int
 
 	if s.cfg.OmniRouteAPIKey == "" {
@@ -182,7 +219,7 @@ func (s *Scheduler) runPipeline() {
 		// Analisa toda vaga sem análise no banco, não só as inseridas neste
 		// ciclo: assim vagas cuja análise falhou antes (erro do LLM, API key
 		// ausente etc.) são retentadas em vez de ficarem órfãs para sempre.
-		pending, err := s.db.GetPendingAnalysisJobs(s.cfg.MaxAnalysesPerCycle, s.cfg.MaxAnalysisAttempts)
+		pending, err := s.db.GetPendingAnalysisJobs(s.cfg.MaxAnalysesPerCycle, s.cfg.MaxAnalysisAttempts, s.cfg.PrioritySources)
 		if err != nil {
 			slog.Error("pipeline: falha ao buscar vagas pendentes de análise", "error", err)
 		}
@@ -223,6 +260,7 @@ func (s *Scheduler) runPipeline() {
 		"duracao", time.Since(start),
 		"vagas_encontradas", len(jobs),
 		"vagas_novas", novas,
+		"vagas_filtradas_titulo", filtradas,
 		"vagas_pendentes", pendentes,
 		"vagas_analisadas", analisadas,
 		"vagas_com_fit_alto", comFitAlto,
