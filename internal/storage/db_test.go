@@ -94,7 +94,7 @@ func TestJobsWithAnalysisReadsOffsetFoundAt(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	jobs, err := db.GetJobsWithAnalysis("", 0)
+	jobs, _, err := db.GetJobsWithAnalysis(JobFilter{})
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -144,7 +144,7 @@ func TestNormalizeLegacyTimestamps(t *testing.T) {
 	}
 	defer db.Close()
 
-	jobs, err := db.GetJobsWithAnalysis("", 0)
+	jobs, _, err := db.GetJobsWithAnalysis(JobFilter{})
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -158,5 +158,65 @@ func TestNormalizeLegacyTimestamps(t *testing.T) {
 	_, analysis, err := db.GetJobByID("j0")
 	if err != nil || !analysis.CreatedAt.Equal(offset) {
 		t.Fatalf("created_at normalizado errado: %v err=%v", analysis.CreatedAt, err)
+	}
+}
+
+func TestJobsWithAnalysisPaginationAndFilters(t *testing.T) {
+	db := openTestDB(t)
+	base := time.Date(2026, 11, 1, 0, 0, 0, 0, time.UTC)
+	// id, fonte, status, score (-1 = sem análise)
+	seed := []struct {
+		id, source, status string
+		score              int
+	}{
+		{"a", "lever", "new", 90},
+		{"b", "lever", "new", 70},
+		{"c", "ashby", "applied", 70},
+		{"d", "ashby", "new", 30},
+		{"e", "lever", "new", -1},
+	}
+	for i, s := range seed {
+		if err := db.InsertJob(models.Job{ID: s.id, Source: s.source, Title: s.id, Company: "c", URL: "u" + s.id, Status: s.status, FoundAt: base.Add(time.Duration(i) * time.Hour)}); err != nil {
+			t.Fatal(err)
+		}
+		if s.score >= 0 {
+			if _, err := db.InsertAnalysis(models.Analysis{JobID: s.id, FitScore: s.score}); err != nil {
+				t.Fatal(err)
+			}
+		}
+	}
+
+	ids := func(jobs []JobWithAnalysis) string {
+		var out []string
+		for _, j := range jobs {
+			out = append(out, j.ID)
+		}
+		return strings.Join(out, ",")
+	}
+
+	// Ordem: score desc, found_at desc (c é mais recente que b).
+	page1, total, err := db.GetJobsWithAnalysis(JobFilter{MinScore: 50, Limit: 2})
+	if err != nil {
+		t.Fatal(err)
+	}
+	page2, _, err := db.GetJobsWithAnalysis(JobFilter{MinScore: 50, Limit: 2, Offset: 2})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if total != 4 || ids(page1) != "a,c" || ids(page2) != "b,e" {
+		t.Fatalf("total=%d página1=%s página2=%s", total, ids(page1), ids(page2))
+	}
+
+	lever, total, _ := db.GetJobsWithAnalysis(JobFilter{Source: "lever", Status: "new"})
+	if total != 3 || ids(lever) != "a,b,e" {
+		t.Fatalf("filtro fonte+status: total=%d %s", total, ids(lever))
+	}
+
+	counts, err := db.CountJobsWithAnalysisByStatus(JobFilter{MinScore: 50, Status: "ignorado"})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if counts["new"] != 3 || counts["applied"] != 1 || len(counts) != 2 {
+		t.Fatalf("contagem por status: %v", counts)
 	}
 }

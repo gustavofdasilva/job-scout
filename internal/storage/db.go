@@ -126,6 +126,10 @@ CREATE TABLE IF NOT EXISTS profile (
 	if _, err := db.conn.Exec(`CREATE INDEX IF NOT EXISTS idx_jobs_dedup_key ON jobs(dedup_key)`); err != nil {
 		return fmt.Errorf("erro ao criar índice de dedup_key: %w", err)
 	}
+	// Usado pela subquery "análise mais recente da vaga" da listagem.
+	if _, err := db.conn.Exec(`CREATE INDEX IF NOT EXISTS idx_analyses_job_created ON analyses(job_id, created_at)`); err != nil {
+		return fmt.Errorf("erro ao criar índice de analyses: %w", err)
+	}
 
 	if err := db.backfillDedupKeys(); err != nil {
 		return err
@@ -475,11 +479,7 @@ const jobsWithAnalysisSelect = `
 	SELECT j.id, j.source, j.title, j.company, j.location, j.url, j.description, j.salary, j.found_at, j.status, j.location_restriction, j.salary_min, j.salary_max, j.salary_currency, j.salary_period,
 	       COALESCE(a.id, ''), COALESCE(a.fit_score, 0), COALESCE(a.summary, ''), COALESCE(a.benefits, ''), COALESCE(a.fit_reasoning, ''),
 	       COALESCE(a.resume_pdf_path, ''), COALESCE(a.resume_keywords, ''), COALESCE(a.resume_points, '')
-	FROM jobs j
-	LEFT JOIN analyses a ON a.id = (
-		SELECT id FROM analyses WHERE job_id = j.id ORDER BY created_at DESC LIMIT 1
-	)
-`
+` + jobsWithAnalysisFrom
 
 // rowScanner é satisfeita tanto por *sql.Row quanto por *sql.Rows, permitindo
 // reaproveitar scanJobWithAnalysis nos dois casos (uma linha ou várias).
@@ -501,27 +501,72 @@ func scanJobWithAnalysis(row rowScanner) (JobWithAnalysis, error) {
 	return item, nil
 }
 
-// GetJobsWithAnalysis retorna as vagas com os dados da análise mais recente
-// de cada uma (se houver), filtradas por status e/ou pontuação mínima de
-// fit. Strings vazias e valores <= 0 desativam o respectivo filtro. O
-// resultado vem ordenado por fit_score decrescente.
-func (db *DB) GetJobsWithAnalysis(status string, minScore int) ([]JobWithAnalysis, error) {
-	query := jobsWithAnalysisSelect + " WHERE 1=1"
-	args := []any{}
+// JobFilter filtra e pagina a listagem de vagas do dashboard. Campos
+// zerados desativam o respectivo filtro; Limit <= 0 traz todas as vagas.
+type JobFilter struct {
+	Status string
+	// MinScore só se aplica a vagas já analisadas: as ainda não analisadas
+	// continuam aparecendo (no fim da lista, com score 0), como o dashboard
+	// sempre as mostrou.
+	MinScore int
+	Source   string
+	Limit    int
+	Offset   int
+}
 
-	if status != "" {
-		query += " AND j.status = ?"
-		args = append(args, status)
+// where monta a cláusula WHERE (sem status quando withStatus é false) e
+// seus argumentos. Espera os aliases j (jobs) e a (análise mais recente)
+// de jobsWithAnalysisSelect.
+func (f JobFilter) where(withStatus bool) (string, []any) {
+	clause := " WHERE 1=1"
+	args := []any{}
+	if withStatus && f.Status != "" {
+		clause += " AND j.status = ?"
+		args = append(args, f.Status)
 	}
-	if minScore > 0 {
-		query += " AND COALESCE(a.fit_score, 0) >= ?"
-		args = append(args, minScore)
+	if f.MinScore > 0 {
+		clause += " AND (a.id IS NULL OR a.fit_score >= ?)"
+		args = append(args, f.MinScore)
 	}
-	query += " ORDER BY COALESCE(a.fit_score, 0) DESC, j.found_at DESC"
+	if f.Source != "" {
+		clause += " AND j.source = ?"
+		args = append(args, f.Source)
+	}
+	return clause, args
+}
+
+// jobsWithAnalysisFrom é o FROM de jobsWithAnalysisSelect, reaproveitado
+// pelas contagens.
+const jobsWithAnalysisFrom = `
+	FROM jobs j
+	LEFT JOIN analyses a ON a.id = (
+		SELECT id FROM analyses WHERE job_id = j.id ORDER BY created_at DESC LIMIT 1
+	)
+`
+
+// GetJobsWithAnalysis retorna uma página das vagas com os dados da análise
+// mais recente de cada uma (se houver), filtradas por f, e o total de
+// vagas que passam pelos filtros (ignorando Limit/Offset). O resultado vem
+// ordenado por fit_score e found_at decrescentes.
+func (db *DB) GetJobsWithAnalysis(f JobFilter) ([]JobWithAnalysis, int, error) {
+	where, args := f.where(true)
+
+	var total int
+	if err := db.conn.QueryRow("SELECT COUNT(1)"+jobsWithAnalysisFrom+where, args...).Scan(&total); err != nil {
+		return nil, 0, fmt.Errorf("erro ao contar vagas com análise: %w", err)
+	}
+
+	// j.id desempata vagas com mesmo score e data, pra paginação por
+	// offset não repetir nem pular vagas entre páginas.
+	query := jobsWithAnalysisSelect + where + " ORDER BY COALESCE(a.fit_score, 0) DESC, j.found_at DESC, j.id"
+	if f.Limit > 0 {
+		query += " LIMIT ? OFFSET ?"
+		args = append(args, f.Limit, max(f.Offset, 0))
+	}
 
 	rows, err := db.conn.Query(query, args...)
 	if err != nil {
-		return nil, fmt.Errorf("erro ao buscar vagas com análise: %w", err)
+		return nil, 0, fmt.Errorf("erro ao buscar vagas com análise: %w", err)
 	}
 	defer rows.Close()
 
@@ -529,15 +574,64 @@ func (db *DB) GetJobsWithAnalysis(status string, minScore int) ([]JobWithAnalysi
 	for rows.Next() {
 		item, err := scanJobWithAnalysis(rows)
 		if err != nil {
-			return nil, fmt.Errorf("erro ao ler vaga com análise: %w", err)
+			return nil, 0, fmt.Errorf("erro ao ler vaga com análise: %w", err)
 		}
 		results = append(results, item)
 	}
 	if err := rows.Err(); err != nil {
-		return nil, fmt.Errorf("erro ao iterar vagas com análise: %w", err)
+		return nil, 0, fmt.Errorf("erro ao iterar vagas com análise: %w", err)
 	}
 
-	return results, nil
+	return results, total, nil
+}
+
+// CountJobsWithAnalysisByStatus conta as vagas por status aplicando os
+// demais filtros de f (score mínimo, fonte) — os números das abas do
+// dashboard. f.Status, Limit e Offset são ignorados.
+func (db *DB) CountJobsWithAnalysisByStatus(f JobFilter) (map[string]int, error) {
+	where, args := f.where(false)
+	rows, err := db.conn.Query("SELECT j.status, COUNT(1)"+jobsWithAnalysisFrom+where+" GROUP BY j.status", args...)
+	if err != nil {
+		return nil, fmt.Errorf("erro ao contar vagas por status: %w", err)
+	}
+	defer rows.Close()
+
+	counts := make(map[string]int)
+	for rows.Next() {
+		var status string
+		var count int
+		if err := rows.Scan(&status, &count); err != nil {
+			return nil, fmt.Errorf("erro ao ler contagem por status: %w", err)
+		}
+		counts[status] = count
+	}
+	if err := rows.Err(); err != nil {
+		return nil, fmt.Errorf("erro ao iterar contagem por status: %w", err)
+	}
+	return counts, nil
+}
+
+// ListSources retorna as fontes que já têm vagas no banco, em ordem
+// alfabética (opções do filtro de fonte do dashboard).
+func (db *DB) ListSources() ([]string, error) {
+	rows, err := db.conn.Query(`SELECT DISTINCT source FROM jobs ORDER BY source`)
+	if err != nil {
+		return nil, fmt.Errorf("erro ao listar fontes: %w", err)
+	}
+	defer rows.Close()
+
+	sources := []string{}
+	for rows.Next() {
+		var s string
+		if err := rows.Scan(&s); err != nil {
+			return nil, fmt.Errorf("erro ao ler fonte: %w", err)
+		}
+		sources = append(sources, s)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, fmt.Errorf("erro ao iterar fontes: %w", err)
+	}
+	return sources, nil
 }
 
 // GetJobWithAnalysisByID retorna uma única vaga com os dados da sua análise

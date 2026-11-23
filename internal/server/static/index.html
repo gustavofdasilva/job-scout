@@ -35,17 +35,23 @@
     <section class="list-pane" :class="{ mobile: mobile }" v-show="showList">
       <div class="list-pane-header">
         <div class="tabs">
-          <button v-for="t in tabs" :key="t.key" class="tab" :class="{ active: tab === t.key }" @click="tab = t.key" v-text="t.label"></button>
+          <button v-for="t in tabs" :key="t.key" class="tab" :class="{ active: tab === t.key }" @click="setTab(t.key)" v-text="tabLabel(t)"></button>
         </div>
-        <div class="score-filter">
-          <span>Score mín</span>
-          <input type="range" min="0" max="100" step="1" v-model.number="minScore" />
-          <span class="score-value" v-text="minScore"></span>
+        <div class="list-filters">
+          <div class="score-filter">
+            <span>Score mín</span>
+            <input type="range" min="0" max="100" step="1" v-model.number="minScore" @input="onFilterChange()" />
+            <span class="score-value" v-text="minScore"></span>
+          </div>
+          <select class="source-select" v-model="source" @change="onFilterChange(true)">
+            <option value="">Todas as fontes</option>
+            <option v-for="s in sources" :key="s" :value="s" v-text="s"></option>
+          </select>
         </div>
       </div>
 
       <div class="job-list">
-        <div v-for="job in visibleJobs" :key="job.id" class="job-card" :class="{ selected: job.id === selectedId }" @click="selectJob(job)">
+        <div v-for="job in jobs" :key="job.id" class="job-card" :class="{ selected: job.id === selectedId }" @click="selectJob(job)">
           <div class="job-card-top">
             <span class="score-pill" :class="scoreClass(job)" v-text="scoreLabel(job)"></span>
             <span class="job-card-title" v-text="job.title"></span>
@@ -58,7 +64,9 @@
           </div>
         </div>
         <div class="empty-state load-error" v-if="loadError" v-text="loadError"></div>
-        <div class="empty-state" v-else-if="visibleJobs.length === 0">Nenhuma vaga com esses filtros.</div>
+        <div class="empty-state" v-else-if="jobs.length === 0 && !loading">Nenhuma vaga com esses filtros.</div>
+        <button class="load-more" v-if="!loadError && jobs.length < total" :disabled="loading" @click="loadJobs(false)"
+                v-text="loading ? 'Carregando...' : `Carregar mais (${jobs.length} de ${total})`"></button>
       </div>
     </section>
 
@@ -166,9 +174,15 @@
     function App() {
       return {
         jobs: [],
+        total: 0,
+        pageSize: 50,
+        loading: false,
         loadError: '',
         tab: 'todas',
         minScore: 40,
+        source: '',
+        sources: [],
+        tabCounts: {},
         selectedId: null,
         running: false,
         analyzing: false,
@@ -194,27 +208,84 @@
           this._onResize = () => { this.mobile = window.innerWidth < 1024; };
           window.addEventListener('resize', this._onResize);
           await this.loadStatus();
-          await this.loadJobs();
+          await Promise.all([this.loadJobs(), this.loadCounts()]);
           setInterval(() => this.loadStatus(), 30000);
         },
 
-        async loadJobs() {
+        // filterParams monta os filtros comuns à listagem e às contagens.
+        filterParams(withStatus) {
+          const params = new URLSearchParams();
+          if (withStatus && this.tab !== 'todas') params.set('status', this.tab);
+          if (this.minScore > 0) params.set('min_score', this.minScore);
+          if (this.source) params.set('source', this.source);
+          return params;
+        },
+
+        // loadJobs carrega a primeira página (reset) ou a próxima. Respostas
+        // de filtros antigos (o usuário mexeu no slider de novo) são
+        // descartadas pelo contador _jobsReq.
+        async loadJobs(reset = true) {
+          const req = (this._jobsReq = (this._jobsReq || 0) + 1);
+          const params = this.filterParams(true);
+          params.set('limit', this.pageSize);
+          params.set('offset', reset ? 0 : this.jobs.length);
+          this.loading = true;
           try {
-            const res = await fetch('/api/jobs');
+            const res = await fetch('/api/jobs?' + params);
             const data = await res.json().catch(() => null);
+            if (req !== this._jobsReq) return;
             if (!res.ok || !Array.isArray(data)) {
               throw new Error(data && data.error ? data.error : 'HTTP ' + res.status);
             }
-            this.jobs = data;
+            this.jobs = reset ? data : this.jobs.concat(data.filter(j => !this.jobs.some(x => x.id === j.id)));
+            this.total = Number(res.headers.get('X-Total-Count')) || this.jobs.length;
             this.loadError = '';
-            if (!this.mobile && !this.selectedId && this.jobs.length) {
+            if (!this.mobile && !this.selected && this.jobs.length) {
               this.selectedId = this.jobs[0].id;
             }
           } catch (err) {
+            if (req !== this._jobsReq) return;
             console.error('falha ao carregar vagas', err);
             this.jobs = [];
+            this.total = 0;
             this.loadError = `Não foi possível carregar as vagas (${err.message}).`;
+          } finally {
+            if (req === this._jobsReq) this.loading = false;
           }
+        },
+
+        async loadCounts() {
+          try {
+            const res = await fetch('/api/jobs/counts?' + this.filterParams(false));
+            if (!res.ok) throw new Error('status ' + res.status);
+            const data = await res.json();
+            this.tabCounts = data.by_status || {};
+            this.sources = data.sources || [];
+          } catch (err) {
+            console.error('falha ao carregar contagens', err);
+          }
+        },
+
+        setTab(key) {
+          if (this.tab === key) return;
+          this.tab = key;
+          this.loadJobs();
+        },
+
+        // onFilterChange recarrega lista e contagens; o slider dispara a
+        // cada passo, então espera ele parar.
+        onFilterChange(immediate = false) {
+          clearTimeout(this._filterTimer);
+          const run = () => { this.loadJobs(); this.loadCounts(); };
+          if (immediate) run(); else this._filterTimer = setTimeout(run, 250);
+        },
+
+        tabLabel(t) {
+          const counts = this.tabCounts;
+          const n = t.key === 'todas'
+            ? Object.values(counts).reduce((a, b) => a + b, 0)
+            : (counts[t.key] || 0);
+          return `${t.label} ${n}`;
         },
 
         async loadStatus() {
@@ -237,6 +308,7 @@
           this._runTimer = setTimeout(() => {
             this.running = false;
             this.loadJobs();
+            this.loadCounts();
             this.loadStatus();
           }, 3000);
         },
@@ -266,7 +338,7 @@
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ status: value }),
           })
-            .then(res => { if (!res.ok) throw new Error('status ' + res.status); this.loadStatus(); })
+            .then(res => { if (!res.ok) throw new Error('status ' + res.status); this.loadStatus(); this.loadCounts(); })
             .catch(err => { job.status = previous; console.error('falha ao atualizar status', err); });
           this.showToast(`Status atualizado para ${this.statusLabel(value)} ✓`);
         },
@@ -383,13 +455,6 @@
 
         get newCount() {
           return this.statusCounts.new || 0;
-        },
-
-        get visibleJobs() {
-          return this.jobs.filter(j =>
-            (this.tab === 'todas' || j.status === this.tab) &&
-            (!j.has_analysis || j.fit_score >= this.minScore)
-          );
         },
 
         get selected() {

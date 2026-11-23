@@ -4,8 +4,11 @@ package server
 import (
 	"embed"
 	"encoding/json"
+	"errors"
+	"fmt"
 	"io/fs"
 	"log/slog"
+	"math"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -67,6 +70,7 @@ func (s *Server) routes() {
 	s.mux.Handle("/", http.FileServer(http.FS(static)))
 
 	s.mux.HandleFunc("GET /api/jobs", s.handleListJobs)
+	s.mux.HandleFunc("GET /api/jobs/counts", s.handleJobCounts)
 	s.mux.HandleFunc("GET /api/jobs/{id}", s.handleGetJob)
 	s.mux.HandleFunc("POST /api/jobs/{id}/analyze", s.handleAnalyzeJob)
 	s.mux.HandleFunc("GET /api/jobs/{id}/resume", s.handleGetResume)
@@ -83,31 +87,95 @@ func (s *Server) handlePing(w http.ResponseWriter, r *http.Request) {
 	writeJSON(w, http.StatusOK, map[string]string{"message": "pong"})
 }
 
+const (
+	defaultJobsPageSize = 50
+	maxJobsPageSize     = 200
+)
+
+// parseJobFilter lê os filtros e a paginação de /api/jobs e
+// /api/jobs/counts: status, min_score, source, limit e offset.
+func parseJobFilter(r *http.Request) (storage.JobFilter, error) {
+	q := r.URL.Query()
+	f := storage.JobFilter{
+		Status: q.Get("status"),
+		Source: q.Get("source"),
+		Limit:  defaultJobsPageSize,
+	}
+	if f.Status != "" && !validStatuses[f.Status] {
+		return f, errors.New("status inválido")
+	}
+
+	ints := []struct {
+		name     string
+		dst      *int
+		min, max int
+	}{
+		{"min_score", &f.MinScore, 0, 100},
+		{"limit", &f.Limit, 1, maxJobsPageSize},
+		{"offset", &f.Offset, 0, math.MaxInt32},
+	}
+	for _, p := range ints {
+		raw := q.Get(p.name)
+		if raw == "" {
+			continue
+		}
+		v, err := strconv.Atoi(raw)
+		if err != nil || v < p.min || v > p.max {
+			return f, fmt.Errorf("%s inválido", p.name)
+		}
+		*p.dst = v
+	}
+	return f, nil
+}
+
+// handleListJobs devolve uma página de vagas (array JSON) ordenada por
+// fit_score e found_at decrescentes. O total de vagas que passam pelos
+// filtros vai no header X-Total-Count.
 func (s *Server) handleListJobs(w http.ResponseWriter, r *http.Request) {
-	status := r.URL.Query().Get("status")
-	if status != "" && !validStatuses[status] {
-		writeError(w, http.StatusBadRequest, "status inválido")
+	filter, err := parseJobFilter(r)
+	if err != nil {
+		writeError(w, http.StatusBadRequest, err.Error())
 		return
 	}
 
-	minScore := 0
-	if raw := r.URL.Query().Get("min_score"); raw != "" {
-		parsed, err := strconv.Atoi(raw)
-		if err != nil {
-			writeError(w, http.StatusBadRequest, "min_score inválido")
-			return
-		}
-		minScore = parsed
-	}
-
-	jobs, err := s.db.GetJobsWithAnalysis(status, minScore)
+	jobs, total, err := s.db.GetJobsWithAnalysis(filter)
 	if err != nil {
 		slog.Error("server: erro ao buscar vagas", "error", err)
 		writeError(w, http.StatusInternalServerError, "erro ao buscar vagas")
 		return
 	}
 
+	w.Header().Set("X-Total-Count", strconv.Itoa(total))
 	writeJSON(w, http.StatusOK, jobs)
+}
+
+// handleJobCounts devolve a contagem de vagas por status com os mesmos
+// filtros de score/fonte da listagem (os números das abas) e as fontes
+// existentes (opções do filtro de fonte).
+func (s *Server) handleJobCounts(w http.ResponseWriter, r *http.Request) {
+	filter, err := parseJobFilter(r)
+	if err != nil {
+		writeError(w, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	counts, err := s.db.CountJobsWithAnalysisByStatus(filter)
+	if err != nil {
+		slog.Error("server: erro ao contar vagas", "error", err)
+		writeError(w, http.StatusInternalServerError, "erro ao contar vagas")
+		return
+	}
+	sources, err := s.db.ListSources()
+	if err != nil {
+		slog.Error("server: erro ao listar fontes", "error", err)
+		writeError(w, http.StatusInternalServerError, "erro ao listar fontes")
+		return
+	}
+
+	writeJSON(w, http.StatusOK, map[string]any{
+		"by_status": counts,
+		"sources":   sources,
+	})
 }
 
 func (s *Server) handleGetJob(w http.ResponseWriter, r *http.Request) {
