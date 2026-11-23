@@ -1,6 +1,11 @@
 package storage
 
 import (
+	"database/sql"
+	"fmt"
+	"strings"
+	"time"
+
 	"path/filepath"
 	"testing"
 
@@ -62,5 +67,96 @@ func TestPendingAnalysisAttempts(t *testing.T) {
 	pending, _ = db.GetPendingAnalysisJobs(50, -1)
 	if len(pending) != 2 {
 		t.Fatalf("pendentes sem limite: %d", len(pending))
+	}
+}
+
+// greenhouseFoundAt reproduz o FoundAt que crawlers como Greenhouse/Ashby
+// geram: time.Parse(RFC3339) de uma data com offset fixo diferente do fuso
+// local, que t.String() formata como "... -0500 -0500".
+func greenhouseFoundAt(t *testing.T) time.Time {
+	t.Helper()
+	ts, err := time.Parse(time.RFC3339, "2026-11-20T10:00:00-05:00")
+	if err != nil {
+		t.Fatal(err)
+	}
+	return ts
+}
+
+// Regressão: /api/jobs quebrava com "unsupported Scan, storing
+// driver.Value type string into type *time.Time" em found_at.
+func TestJobsWithAnalysisReadsOffsetFoundAt(t *testing.T) {
+	db := openTestDB(t)
+	foundAt := greenhouseFoundAt(t)
+	if err := db.InsertJob(models.Job{ID: "gh", Source: "greenhouse", Title: "Backend Engineer", Company: "Acme", URL: "https://x/gh", FoundAt: foundAt}); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := db.InsertAnalysis(models.Analysis{JobID: "gh", FitScore: 80, CreatedAt: foundAt}); err != nil {
+		t.Fatal(err)
+	}
+
+	jobs, err := db.GetJobsWithAnalysis("", 0)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(jobs) != 1 || !jobs[0].FoundAt.Equal(foundAt) || jobs[0].FitScore != 80 {
+		t.Fatalf("vaga lida errada: %+v", jobs)
+	}
+}
+
+// Datas gravadas antes do _time_format (formato t.String()) precisam ser
+// reescritas pela migração pra voltarem a ser lidas.
+func TestNormalizeLegacyTimestamps(t *testing.T) {
+	path := filepath.Join(t.TempDir(), "legacy.db")
+	db, err := Open(path)
+	if err != nil {
+		t.Fatal(err)
+	}
+	db.Close()
+
+	// Conexão sem dsnParams = comportamento antigo do driver.
+	raw, err := sql.Open("sqlite", path)
+	if err != nil {
+		t.Fatal(err)
+	}
+	offset := greenhouseFoundAt(t)
+	now := time.Now() // com leitura monotônica: " m=+0.001"
+	for i, ts := range []time.Time{offset, now} {
+		id := fmt.Sprintf("j%d", i)
+		if _, err := raw.Exec(`INSERT INTO jobs (id, source, title, company, location, url, description, salary, found_at) VALUES (?, 'x', ?, 'c', '', ?, '', '', ?)`, id, id, "u"+id, ts); err != nil {
+			t.Fatal(err)
+		}
+		if _, err := raw.Exec(`INSERT INTO analyses (id, job_id, fit_score, summary, benefits, fit_reasoning, resume_md, resume_pdf_path, created_at) VALUES (?, ?, 50, '', '', '', '', '', ?)`, "a"+id, id, ts); err != nil {
+			t.Fatal(err)
+		}
+	}
+	var stored string
+	if err := raw.QueryRow(`SELECT CAST(found_at AS TEXT) FROM jobs WHERE id = 'j0'`).Scan(&stored); err != nil {
+		t.Fatal(err)
+	}
+	if !strings.HasSuffix(stored, "-0500 -0500") {
+		t.Fatalf("pré-condição: esperava formato t.String() com offset fixo, veio %q", stored)
+	}
+	raw.Close()
+
+	db, err = Open(path)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer db.Close()
+
+	jobs, err := db.GetJobsWithAnalysis("", 0)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(jobs) != 2 {
+		t.Fatalf("esperava 2 vagas, veio %d", len(jobs))
+	}
+	// Ordenação por found_at DESC (fit_score empata): now vem antes.
+	if jobs[0].ID != "j1" || !jobs[1].FoundAt.Equal(offset) || !jobs[0].FoundAt.Equal(now.Round(0)) {
+		t.Fatalf("datas normalizadas erradas: %v / %v", jobs[0].FoundAt, jobs[1].FoundAt)
+	}
+	_, analysis, err := db.GetJobByID("j0")
+	if err != nil || !analysis.CreatedAt.Equal(offset) {
+		t.Fatalf("created_at normalizado errado: %v err=%v", analysis.CreatedAt, err)
 	}
 }

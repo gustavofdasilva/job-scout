@@ -6,6 +6,7 @@ import (
 	"encoding/hex"
 	"errors"
 	"fmt"
+	"log/slog"
 	"strings"
 	"time"
 
@@ -19,9 +20,24 @@ type DB struct {
 	conn *sql.DB
 }
 
+// dsnParams fixa como o driver grava e lê datas. Sem _time_format, o
+// modernc.org/sqlite grava time.Time com t.String() ("2026-11-20 10:00:00
+// -0500 -0500", às vezes com " m=+1.23"), e esse formato só volta a virar
+// time.Time quando o fuso tem nome (UTC, -03...): datas vindas de APIs com
+// offset fixo (RFC3339 "-05:00", comum em Greenhouse/Ashby/SmartRecruiters)
+// voltavam como string e quebravam o Scan em *time.Time. Com "sqlite" o
+// formato é "2006-01-02 15:04:05.999999999-07:00", que o driver sempre
+// reconhece; _timezone=UTC grava tudo em UTC, o que mantém a ordenação
+// textual (ORDER BY found_at) igual à cronológica.
+const dsnParams = "_time_format=sqlite&_timezone=UTC"
+
 // Open conecta ao banco SQLite no caminho informado e garante que as tabelas existam.
 func Open(path string) (*DB, error) {
-	conn, err := sql.Open("sqlite", path)
+	dsn := path + "?" + dsnParams
+	if strings.Contains(path, "?") {
+		dsn = path + "&" + dsnParams
+	}
+	conn, err := sql.Open("sqlite", dsn)
 	if err != nil {
 		return nil, fmt.Errorf("erro ao abrir banco de dados %q: %w", path, err)
 	}
@@ -111,7 +127,100 @@ CREATE TABLE IF NOT EXISTS profile (
 		return fmt.Errorf("erro ao criar índice de dedup_key: %w", err)
 	}
 
-	return db.backfillDedupKeys()
+	if err := db.backfillDedupKeys(); err != nil {
+		return err
+	}
+	return db.normalizeTimestamps()
+}
+
+// timestampColumns são as colunas DATETIME reescritas por
+// normalizeTimestamps.
+var timestampColumns = []struct{ table, column string }{
+	{"jobs", "found_at"},
+	{"analyses", "created_at"},
+}
+
+// storedTimeLayout é o formato gravado pelo driver com _time_format=sqlite.
+const storedTimeLayout = "2006-01-02 15:04:05.999999999-07:00"
+
+// normalizeTimestamps reescreve no formato de storedTimeLayout, em UTC, as
+// datas gravadas antes de dsnParams existir (formato t.String(), com fusos
+// variados). Linhas já em UTC terminam em "+00:00" e são puladas, então
+// depois da primeira execução isso é um no-op.
+func (db *DB) normalizeTimestamps() error {
+	for _, tc := range timestampColumns {
+		// CAST tira o tipo declarado da coluna: o driver devolve o texto
+		// cru em vez de tentar (e falhar) convertê-lo em time.Time.
+		rows, err := db.conn.Query(fmt.Sprintf(
+			`SELECT rowid, CAST(%[2]s AS TEXT) FROM %[1]s WHERE typeof(%[2]s) = 'text' AND %[2]s NOT LIKE '%%+00:00'`,
+			tc.table, tc.column,
+		))
+		if err != nil {
+			return fmt.Errorf("erro ao buscar datas de %s.%s: %w", tc.table, tc.column, err)
+		}
+		type fix struct {
+			rowid int64
+			value string
+		}
+		var fixes []fix
+		for rows.Next() {
+			var rowid int64
+			var raw string
+			if err := rows.Scan(&rowid, &raw); err != nil {
+				rows.Close()
+				return fmt.Errorf("erro ao ler data de %s.%s: %w", tc.table, tc.column, err)
+			}
+			t, err := parseStoredTime(raw)
+			if err != nil {
+				slog.Warn("storage: data não normalizada", "table", tc.table, "column", tc.column, "rowid", rowid, "error", err)
+				continue
+			}
+			fixes = append(fixes, fix{rowid, t.UTC().Format(storedTimeLayout)})
+		}
+		rows.Close()
+		if err := rows.Err(); err != nil {
+			return fmt.Errorf("erro ao iterar datas de %s.%s: %w", tc.table, tc.column, err)
+		}
+
+		for _, f := range fixes {
+			if _, err := db.conn.Exec(fmt.Sprintf(`UPDATE %s SET %s = ? WHERE rowid = ?`, tc.table, tc.column), f.value, f.rowid); err != nil {
+				return fmt.Errorf("erro ao normalizar data de %s.%s (rowid %d): %w", tc.table, tc.column, f.rowid, err)
+			}
+		}
+	}
+	return nil
+}
+
+// parseStoredTime entende os formatos já gravados no banco: o de
+// time.Time.String() (com ou sem " m=+..." e com qualquer nome de fuso,
+// inclusive "-0500") e os formatos ISO que o SQLite aceita.
+func parseStoredTime(raw string) (time.Time, error) {
+	s := strings.TrimSpace(raw)
+	if i := strings.Index(s, " m="); i >= 0 {
+		s = s[:i]
+	}
+	// t.String() = "data hora offset nomeDoFuso": o nome é redundante com o
+	// offset e é justamente o que o time.Parse não aceita quando vem como
+	// "-0500", então descartamos.
+	if f := strings.Fields(s); len(f) >= 3 {
+		if t, err := time.Parse("2006-01-02 15:04:05.999999999 -0700", f[0]+" "+f[1]+" "+f[2]); err == nil {
+			return t, nil
+		}
+	}
+	for _, layout := range []string{
+		storedTimeLayout,
+		"2006-01-02T15:04:05.999999999-07:00",
+		"2006-01-02 15:04:05.999999999Z07:00",
+		time.RFC3339Nano,
+		"2006-01-02 15:04:05.999999999",
+		"2006-01-02T15:04:05.999999999",
+		"2006-01-02",
+	} {
+		if t, err := time.Parse(layout, s); err == nil {
+			return t, nil
+		}
+	}
+	return time.Time{}, fmt.Errorf("formato de data desconhecido: %q", raw)
 }
 
 // backfillDedupKeys preenche dedup_key das vagas gravadas antes da coluna
