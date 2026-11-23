@@ -6,6 +6,7 @@ package analyzer
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"log/slog"
@@ -13,6 +14,7 @@ import (
 	"net/http"
 	"os"
 	"strings"
+	"sync/atomic"
 	"time"
 
 	"job-scout/internal/models"
@@ -34,13 +36,20 @@ type Analyzer struct {
 	baseURL string
 	apiKey  string
 	model   string
+
+	// jsonMode envia response_format {"type": "json_object"}. Desliga
+	// sozinho (até reiniciar) se o gateway recusar o campo com 400.
+	jsonMode atomic.Bool
 }
 
 // NewAnalyzer cria um novo Analyzer apontando para o endpoint OpenAI-compatible
 // do OmniRoute (baseURL, ex: "http://omniroute:20128/v1"), com a chave de API
-// e o modelo a serem usados.
-func NewAnalyzer(baseURL, apiKey, model string) *Analyzer {
-	return &Analyzer{baseURL: baseURL, apiKey: apiKey, model: model}
+// e o modelo a serem usados. jsonMode liga o envio de response_format
+// json_object (config omniroute_json_mode).
+func NewAnalyzer(baseURL, apiKey, model string, jsonMode bool) *Analyzer {
+	a := &Analyzer{baseURL: baseURL, apiKey: apiKey, model: model}
+	a.jsonMode.Store(jsonMode)
+	return a
 }
 
 // AnalyzeJob lê o perfil do usuário em profilePath (sem cachear) e usa o LLM
@@ -133,9 +142,24 @@ type analysisResult struct {
 }
 
 type chatRequest struct {
-	Model     string        `json:"model"`
-	MaxTokens int           `json:"max_tokens"`
-	Messages  []chatMessage `json:"messages"`
+	Model          string          `json:"model"`
+	MaxTokens      int             `json:"max_tokens"`
+	Messages       []chatMessage   `json:"messages"`
+	ResponseFormat *responseFormat `json:"response_format,omitempty"`
+}
+
+type responseFormat struct {
+	Type string `json:"type"`
+}
+
+// badRequestError é um 400 do gateway — usado pra detectar quando ele não
+// aceita response_format.
+type badRequestError struct {
+	message string
+}
+
+func (e *badRequestError) Error() string {
+	return fmt.Sprintf("status inesperado %d do omniroute: %s", http.StatusBadRequest, e.message)
 }
 
 type chatMessage struct {
@@ -181,7 +205,7 @@ func (a *Analyzer) callWithRetry(prompt string) (analysisResult, error) {
 			time.Sleep(delay)
 		}
 
-		text, err := a.callAPI(prompt)
+		text, err := a.callAPIWithFallback(prompt)
 		if err != nil {
 			if rlErr, ok := err.(*retryableError); ok {
 				lastErr = rlErr
@@ -202,7 +226,30 @@ func backoffDelay(attempt int) time.Duration {
 	return base + jitter
 }
 
-func (a *Analyzer) callAPI(prompt string) (string, error) {
+// callAPIWithFallback chama o gateway com response_format (se ligado). Se
+// ele responder 400 e a mesma chamada sem response_format funcionar, o
+// campo é desligado para as próximas chamadas.
+func (a *Analyzer) callAPIWithFallback(prompt string) (string, error) {
+	if !a.jsonMode.Load() {
+		return a.callAPI(prompt, false)
+	}
+	text, err := a.callAPI(prompt, true)
+	var badReq *badRequestError
+	if !errors.As(err, &badReq) {
+		return text, err
+	}
+	text, retryErr := a.callAPI(prompt, false)
+	if retryErr != nil {
+		return "", err
+	}
+	if a.jsonMode.CompareAndSwap(true, false) {
+		slog.Warn("omniroute: gateway recusou response_format json_object, desativado até reiniciar — configure omniroute_json_mode: false",
+			"error", truncate(badReq.message, maxLoggedResponse))
+	}
+	return text, nil
+}
+
+func (a *Analyzer) callAPI(prompt string, jsonMode bool) (string, error) {
 	reqBody := chatRequest{
 		Model:     a.model,
 		MaxTokens: maxTokens,
@@ -210,6 +257,9 @@ func (a *Analyzer) callAPI(prompt string) (string, error) {
 			{Role: "system", Content: systemPrompt},
 			{Role: "user", Content: prompt},
 		},
+	}
+	if jsonMode {
+		reqBody.ResponseFormat = &responseFormat{Type: "json_object"}
 	}
 
 	body, err := json.Marshal(reqBody)
@@ -246,6 +296,9 @@ func (a *Analyzer) callAPI(prompt string) (string, error) {
 		if resp.StatusCode == http.StatusTooManyRequests || resp.StatusCode >= http.StatusInternalServerError {
 			return "", &retryableError{statusCode: resp.StatusCode, message: msg}
 		}
+		if resp.StatusCode == http.StatusBadRequest {
+			return "", &badRequestError{message: msg}
+		}
 		return "", fmt.Errorf("status inesperado %d do omniroute: %s", resp.StatusCode, msg)
 	}
 
@@ -263,20 +316,4 @@ func (a *Analyzer) callAPI(prompt string) (string, error) {
 	}
 
 	return choice.Message.Content, nil
-}
-
-// parseResult faz o parse do JSON retornado pelo modelo, removendo eventuais
-// blocos de código markdown que o modelo tenha adicionado por engano.
-func parseResult(text string) (analysisResult, error) {
-	cleaned := strings.TrimSpace(text)
-	cleaned = strings.TrimPrefix(cleaned, "```json")
-	cleaned = strings.TrimPrefix(cleaned, "```")
-	cleaned = strings.TrimSuffix(cleaned, "```")
-	cleaned = strings.TrimSpace(cleaned)
-
-	var result analysisResult
-	if err := json.Unmarshal([]byte(cleaned), &result); err != nil {
-		return analysisResult{}, fmt.Errorf("erro ao parsear JSON da análise: %w (texto: %q)", err, cleaned)
-	}
-	return result, nil
 }

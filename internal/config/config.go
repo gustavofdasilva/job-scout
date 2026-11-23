@@ -21,13 +21,16 @@ type Crawler struct {
 
 // Config representa a configuração completa do job-scout.
 type Config struct {
-	OmniRouteBaseURL string    `yaml:"omniroute_base_url"`
-	OmniRouteAPIKey  string    `yaml:"omniroute_api_key"`
-	OmniRouteModel   string    `yaml:"omniroute_model"`
-	Schedule         string    `yaml:"schedule"`
-	MinFitScore      int       `yaml:"min_fit_score"`
-	ServerPort       int       `yaml:"server_port"`
-	Crawlers         []Crawler `yaml:"crawlers"`
+	OmniRouteBaseURL string `yaml:"omniroute_base_url"`
+	OmniRouteAPIKey  string `yaml:"omniroute_api_key"`
+	OmniRouteModel   string `yaml:"omniroute_model"`
+	// OmniRouteJSONMode envia response_format {"type": "json_object"} na
+	// análise de fit. Omitido = ligado (ver JSONMode).
+	OmniRouteJSONMode *bool     `yaml:"omniroute_json_mode"`
+	Schedule          string    `yaml:"schedule"`
+	MinFitScore       int       `yaml:"min_fit_score"`
+	ServerPort        int       `yaml:"server_port"`
+	Crawlers          []Crawler `yaml:"crawlers"`
 
 	TelegramBotToken string `yaml:"telegram_bot_token"`
 	TelegramChatID   string `yaml:"telegram_chat_id"`
@@ -86,6 +89,12 @@ const (
 	defaultMaxAnalysesPerCycle = 50
 	defaultMaxAnalysisAttempts = 3
 )
+
+// JSONMode informa se a análise deve pedir response_format json_object ao
+// OmniRoute. Ligado quando omniroute_json_mode é omitido.
+func (c *Config) JSONMode() bool {
+	return c.OmniRouteJSONMode == nil || *c.OmniRouteJSONMode
+}
 
 // Load lê e faz o parse do arquivo de configuração YAML no caminho informado.
 func Load(path string) (*Config, error) {

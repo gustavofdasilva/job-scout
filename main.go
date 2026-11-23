@@ -54,7 +54,7 @@ func main() {
 
 	entries := buildCrawlerEntries(cfg.Crawlers, db)
 	orchestrator := crawler.NewOrchestrator(entries)
-	az := analyzer.NewAnalyzer(cfg.OmniRouteBaseURL, cfg.OmniRouteAPIKey, cfg.OmniRouteModel)
+	az := analyzer.NewAnalyzer(cfg.OmniRouteBaseURL, cfg.OmniRouteAPIKey, cfg.OmniRouteModel, cfg.JSONMode())
 	resumeGen := resume.NewGenerator(cfg.OmniRouteBaseURL, cfg.OmniRouteAPIKey, cfg.OmniRouteModel, resumeOutputDir)
 	checklistGen := checklist.NewGenerator(cfg.OmniRouteBaseURL, cfg.OmniRouteAPIKey, cfg.OmniRouteModel)
 	telegram := notifier.NewTelegram(cfg.TelegramBotToken, cfg.TelegramChatID, cfg.TelegramMinScore)
