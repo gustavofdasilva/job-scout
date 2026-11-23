@@ -21,6 +21,12 @@ omniroute_api_key: ""
 # em Providers/Models (ex: "kie/claude-haiku-4-5", "cnl/claude-haiku-4-5").
 omniroute_model: "claude-haiku-4-5"
 
+# Pede ao modelo resposta em JSON puro (response_format {"type":
+# "json_object"}) na análise de fit. Se o OmniRoute/provedor recusar o campo
+# com 400, o job-scout desliga sozinho até reiniciar e avisa no log — nesse
+# caso deixe false aqui. Se omitido, usa true.
+omniroute_json_mode: true
+
 # Expressão cron (formato padrão de 5 campos: minuto hora dia mês dia-da-semana)
 # que define a frequência de execução do crawler + análise.
 # Exemplo abaixo: todos os dias às 8h e às 20h.
@@ -55,6 +61,66 @@ max_analyses_per_cycle: 50
 # Se omitido (ou 0), usa 3. Valor negativo desativa o limite.
 max_analysis_attempts: 3
 
+# Filtro por título aplicado antes do LLM. Vagas novas ainda não analisadas
+# cujo título casar com algum padrão de title_exclude, ou não casar com
+# nenhum termo de title_require, ganham o status "filtered" (aba Filtradas
+# do dashboard) sem chamar o LLM e não contam em max_analyses_per_cycle.
+# Cada padrão casa como palavra/frase inteira, sem diferenciar maiúsculas:
+# "sales" pega "Pre-Sales Engineer" mas não "Salesforce Developer"; "ios" não
+# pega "Studios". Não é regex. Atenção: "engineer" não casa com
+# "engineering".
+# Se omitidos, usam as listas abaixo; uma lista vazia ([]) desativa a regra.
+title_exclude:
+  - sales
+  - account executive
+  - account manager
+  - recruiter
+  - recruiting
+  - talent acquisition
+  - product manager
+  - marketing
+  - designer
+  - support specialist
+  - business development
+  - director
+  - head of
+  - android
+  - ios
+  - mobile
+title_require:
+  - engineer
+  - developer
+  - desenvolvedor
+  - desenvolvedora
+  - engenheiro
+  - engenheira
+  - programador
+  - programadora
+  - sre
+  - devops
+  - backend
+  - back-end
+  - platform
+
+# Fontes cujas vagas pendentes vão primeiro para o LLM (ATS e boards
+# remotos); dentro de cada grupo, as mais recentes primeiro. Se omitido, usa
+# a lista abaixo.
+priority_sources:
+  - ashby
+  - greenhouse
+  - lever
+  - workable
+  - smartrecruiters
+  - himalayas
+  - jobicy
+  - workingnomads
+  - arbeitnow
+  - remotive
+  - remoteok
+  - weworkremotely
+  - getonbrd
+  - ycombinator
+
 # Lista de crawlers configurados. Cada crawler busca vagas em uma fonte
 # específica (ex: site de empregos) usando os termos de busca informados.
 crawlers:
@@ -63,7 +129,10 @@ crawlers:
     search_terms: ["desenvolvedor backend", "golang", "engenheiro de software"]
     max_pages: 5 # 5 páginas x 10 vagas = até 50 vagas por search_term
   - name: indeed
-    enabled: true
+    # Desativado: o Indeed responde 403 a toda requisição do crawler
+    # (proteção anti-bot), então só gera erro no log. Não adianta trocar
+    # User-Agent — precisaria de navegador real.
+    enabled: false
     search_terms: ["backend developer", "golang"]
     max_pages: 3
   - name: remoteok
@@ -104,13 +173,12 @@ crawlers:
       - whoop
       - gopuff
       - ro
-      - aircall
-      - ledger
       - entrata
       # Verificadas com conta ativa (sem vagas abertas no momento da checagem)
       # Manter na lista pois podem abrir vagas — o crawler trata array vazio sem erro
       - kraken
-      - mistral
+      # Removidas em nov/2026 (404 no Lever): aircall e mistral não foram
+      # encontradas em nenhum ATS suportado; ledger migrou para o Ashby.
   - name: hackernews
     enabled: true
     search_terms: ["golang", "go", "backend", "remote", "software engineer"]
@@ -151,6 +219,7 @@ crawlers:
       - warp
       - temporal
       - railway
+      - ledger # saiu do Lever em nov/2026
   - name: greenhouse
     enabled: true
     search_terms: ["golang", "backend", "back-end", "software engineer", "platform engineer", "infrastructure"]

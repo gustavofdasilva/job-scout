@@ -3,6 +3,7 @@ package config
 import (
 	"os"
 	"path/filepath"
+	"slices"
 	"testing"
 )
 
@@ -33,5 +34,27 @@ func TestTitleFilterDefaults(t *testing.T) {
 	cfg = loadYAML(t, "title_exclude: [\"sales\"]\n")
 	if len(cfg.TitleExclude) != 1 || cfg.TitleExclude[0] != "sales" {
 		t.Fatalf("lista explícita: %v", cfg.TitleExclude)
+	}
+}
+
+// O example.config.yaml documenta os padrões: tem que carregar e trazer as
+// mesmas listas usadas quando os campos são omitidos.
+func TestExampleConfigMatchesDefaults(t *testing.T) {
+	cfg, err := Load(filepath.Join("..", "..", "example.config.yaml"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !slices.Equal(cfg.TitleExclude, defaultTitleExclude) ||
+		!slices.Equal(cfg.TitleRequire, defaultTitleRequire) ||
+		!slices.Equal(cfg.PrioritySources, defaultPrioritySources) {
+		t.Fatal("listas do example.config.yaml diferem dos padrões de config.go")
+	}
+	if !cfg.JSONMode() {
+		t.Fatal("omniroute_json_mode deveria estar ligado no exemplo")
+	}
+	for _, c := range cfg.Crawlers {
+		if c.Name == "indeed" && c.Enabled {
+			t.Fatal("indeed deveria estar desativado no exemplo")
+		}
 	}
 }

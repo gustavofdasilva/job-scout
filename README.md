@@ -148,13 +148,14 @@ ignorado — não roda dois ciclos em paralelo.
 
 | Rota | Descrição |
 |---|---|
-| `GET /api/jobs?status=&min_score=` | Lista vagas + análise, ordenadas por fit_score |
+| `GET /api/jobs?status=&min_score=&source=&limit=&offset=` | Página de vagas + análise (array JSON), ordenadas por fit_score e found_at decrescentes. `limit` padrão 50, máx. 200; total no header `X-Total-Count`. Sem `status`, omite as vagas `filtered` |
+| `GET /api/jobs/counts?min_score=&source=` | Contagem de vagas por status (abas do dashboard) e lista de fontes |
 | `GET /api/jobs/{id}` | Detalhes completos de uma vaga (job + analysis) |
 | `POST /api/jobs/{id}/analyze` | Analisa (ou reanalisa) a vaga via LLM — primeira análise se nunca rodou, ou atualiza fit_score/resumo preservando currículo/checklist já gerados |
 | `GET /api/jobs/{id}/resume` | Serve o currículo em PDF (ou `.md` como fallback) |
 | `POST /api/jobs/{id}/resume` | Gera o currículo completo (Markdown/PDF) pra essa vaga — exige vaga já analisada |
 | `POST /api/jobs/{id}/checklist` | Gera o checklist de palavras-chave/pontos pro currículo dessa vaga — exige vaga já analisada |
-| `POST /api/jobs/{id}/status` | Atualiza status (`new`/`reviewed`/`applied`/`ignored`) |
+| `POST /api/jobs/{id}/status` | Atualiza status (`new`/`reviewed`/`applied`/`ignored`/`filtered`) |
 | `POST /api/trigger` | Dispara o pipeline imediatamente |
 | `GET /api/status` | Último run, próximo run, contagem de vagas por status |
 
@@ -176,6 +177,8 @@ internal/storage/    persistência em SQLite
 - **LinkedIn não é suportado.** O crawler é um stub que retorna erro — o
   LinkedIn exige autenticação e tem proteções anti-scraping agressivas
   demais pra v1.
+- **Indeed vem desativado** no `example.config.yaml`: responde 403 (anti-bot)
+  a toda requisição do crawler.
 - **Indeed, ProgramaThor e Trampos dependem de scraping de HTML**, não de
   API pública. O markup desses sites muda com frequência e pode quebrar o
   parsing sem aviso — se um desses crawlers parar de encontrar vagas, os
@@ -204,9 +207,6 @@ internal/storage/    persistência em SQLite
   atrás de uma VPN/rede privada ou só em `localhost` é recomendado.
 - **Sem suporte a múltiplos perfis ou múltiplos usuários** — o job-scout
   assume um único `profile.md` e um único banco SQLite local.
-- **Sem paginação no `/api/jobs`** — a lista completa (filtrada) é
-  retornada de uma vez. Pra volumes muito grandes de vagas acumuladas, a
-  resposta e a renderização no dashboard podem ficar lentas.
 - **Sem suíte de testes automatizados.** A validação até agora foi manual
   (builds, `go vet`, smoke tests pontuais contra APIs reais e contra um
   banco de dados de teste). Adicionar testes automatizados pros pacotes
