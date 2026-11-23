@@ -11,7 +11,12 @@ import (
 )
 
 const (
-	gupyAPIBaseURL = "https://employability-portal.gupy.io/api/v1/jobs"
+	// gupyAPIBaseURL é a rota que o próprio portal.gupy.io chama ao buscar
+	// vagas (proxy pro backend employability-portal). O endpoint antigo,
+	// employability-portal.gupy.io/api/v1/jobs, passou a responder 404 em
+	// nov/2026; os parâmetros (jobName, offset, limit) e o formato da
+	// resposta continuam os mesmos.
+	gupyAPIBaseURL = "https://portal.gupy.io/api/job-search/jobs"
 	gupyPageLimit  = 10
 )
 
@@ -64,35 +69,19 @@ func (c *GupyCrawler) Fetch(term string, maxPages int) ([]models.Job, error) {
 			return jobs, fmt.Errorf("erro ao buscar offset %d de %q na gupy: %w", offset, term, err)
 		}
 
-		var parsed gupyResponse
-		if err := json.Unmarshal(body, &parsed); err != nil {
+		page, total, err := parseGupy(body)
+		if err != nil {
 			return jobs, fmt.Errorf("erro ao parsear resposta da gupy para %q: %w", term, err)
 		}
 
-		if len(parsed.Data) == 0 {
+		if len(page) == 0 {
 			slog.Debug("gupy: nenhuma vaga encontrada, encerrando paginação", "term", term, "offset", offset)
 			break
 		}
-
-		for _, gj := range parsed.Data {
-			if gj.JobUrl == "" {
-				continue
-			}
-			jobs = append(jobs, models.Job{
-				ID:          hashID(gj.JobUrl),
-				Source:      "gupy",
-				Title:       gj.Name,
-				Company:     gj.CareerPageName,
-				Location:    gupyLocation(gj),
-				URL:         gj.JobUrl,
-				Description: gj.Description,
-				FoundAt:     gupyPublishedDate(gj.PublishedDate),
-				Status:      "new",
-			})
-		}
+		jobs = append(jobs, page...)
 
 		nextOffset := offset + gupyPageLimit
-		if nextOffset >= parsed.Pagination.Total || nextOffset >= maxPages*gupyPageLimit {
+		if nextOffset >= total || nextOffset >= maxPages*gupyPageLimit {
 			break
 		}
 
@@ -100,6 +89,34 @@ func (c *GupyCrawler) Fetch(term string, maxPages int) ([]models.Job, error) {
 	}
 
 	return jobs, nil
+}
+
+// parseGupy converte uma página da resposta da Gupy em vagas e devolve o
+// total de vagas da busca (pra paginação).
+func parseGupy(body []byte) ([]models.Job, int, error) {
+	var parsed gupyResponse
+	if err := json.Unmarshal(body, &parsed); err != nil {
+		return nil, 0, err
+	}
+
+	var jobs []models.Job
+	for _, gj := range parsed.Data {
+		if gj.JobUrl == "" {
+			continue
+		}
+		jobs = append(jobs, models.Job{
+			ID:          hashID(gj.JobUrl),
+			Source:      "gupy",
+			Title:       gj.Name,
+			Company:     gj.CareerPageName,
+			Location:    gupyLocation(gj),
+			URL:         gj.JobUrl,
+			Description: gj.Description,
+			FoundAt:     gupyPublishedDate(gj.PublishedDate),
+			Status:      "new",
+		})
+	}
+	return jobs, parsed.Pagination.Total, nil
 }
 
 func gupyLocation(j gupyJob) string {
