@@ -112,11 +112,11 @@ func parseHimalayas(body []byte) ([]models.Job, int, error) {
 			LocationRestriction: restriction,
 		}
 		if h.MinSalary != nil && h.MaxSalary != nil && h.Currency != nil {
-			job.SalaryMin = int(*h.MinSalary)
-			job.SalaryMax = int(*h.MaxSalary)
+			job.SalaryMin = salaryAmount(*h.MinSalary)
+			job.SalaryMax = salaryAmount(*h.MaxSalary)
 			job.SalaryCurrency = *h.Currency
 			job.SalaryPeriod = h.SalaryPeriod
-			job.Salary = fmt.Sprintf("%s %d–%d / %s", job.SalaryCurrency, job.SalaryMin, job.SalaryMax, job.SalaryPeriod)
+			job.Salary = salaryText(job.SalaryCurrency, *h.MinSalary, *h.MaxSalary, job.SalaryPeriod)
 		}
 		jobs = append(jobs, job)
 	}

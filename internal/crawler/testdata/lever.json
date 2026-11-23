@@ -1,0 +1,37 @@
+[
+  {
+    "id": "0a1b2c3d-0000-4000-8000-000000000001",
+    "text": "Software Engineer, Backend Platform",
+    "categories": {"commitment": "Full-time", "location": "Foster City, CA", "team": "Software", "department": "Engineering"},
+    "descriptionPlain": "Build backend services in Go and C++ for the autonomy platform.",
+    "salaryRange": {"currency": "USD", "interval": "per-year-salary", "min": 189000, "max": 264500},
+    "hostedUrl": "https://jobs.lever.co/zoox/0a1b2c3d-0000-4000-8000-000000000001",
+    "createdAt": 1762300800000
+  },
+  {
+    "id": "0a1b2c3d-0000-4000-8000-000000000002",
+    "text": "Fleet Operations Technician (Backend Tools)",
+    "categories": {"commitment": "Full-time", "location": "Las Vegas, NV", "team": "Operations", "department": "Fleet"},
+    "descriptionPlain": "Support fleet tooling and backend dashboards.",
+    "salaryRange": {"min": 24.5, "max": 30.25, "currency": "USD", "interval": "per-hour-wage"},
+    "hostedUrl": "https://jobs.lever.co/zoox/0a1b2c3d-0000-4000-8000-000000000002",
+    "createdAt": 1762387200000
+  },
+  {
+    "id": "0a1b2c3d-0000-4000-8000-000000000003",
+    "text": "Backend Engineer, Data",
+    "categories": {"commitment": "Full-time", "location": "Remote", "team": "Data", "department": "Engineering"},
+    "descriptionPlain": "Data pipelines in Go.",
+    "hostedUrl": "https://jobs.lever.co/zoox/0a1b2c3d-0000-4000-8000-000000000003",
+    "createdAt": 1762473600000
+  },
+  {
+    "id": "0a1b2c3d-0000-4000-8000-000000000004",
+    "text": "Account Executive",
+    "categories": {"commitment": "Full-time", "location": "New York, NY", "team": "Sales", "department": "Sales"},
+    "descriptionPlain": "Sell rides.",
+    "salaryRange": {"min": 95000.5, "max": 120000, "currency": "USD", "interval": "per-year-salary"},
+    "hostedUrl": "https://jobs.lever.co/zoox/0a1b2c3d-0000-4000-8000-000000000004",
+    "createdAt": 1762473600000
+  }
+]

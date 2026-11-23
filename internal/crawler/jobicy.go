@@ -103,11 +103,11 @@ func parseJobicy(body []byte) ([]models.Job, string, error) {
 			LocationRestriction: j.JobGeo, // "USA", "Anywhere", "LATAM", "Canada, USA"...
 		}
 		if j.SalaryMin != nil && j.SalaryMax != nil {
-			job.SalaryMin = int(*j.SalaryMin)
-			job.SalaryMax = int(*j.SalaryMax)
+			job.SalaryMin = salaryAmount(*j.SalaryMin)
+			job.SalaryMax = salaryAmount(*j.SalaryMax)
 			job.SalaryCurrency = j.SalaryCurrency
 			job.SalaryPeriod = j.SalaryPeriod
-			job.Salary = fmt.Sprintf("%s %d–%d / %s", j.SalaryCurrency, job.SalaryMin, job.SalaryMax, j.SalaryPeriod)
+			job.Salary = salaryText(j.SalaryCurrency, *j.SalaryMin, *j.SalaryMax, j.SalaryPeriod)
 		}
 		jobs = append(jobs, job)
 	}

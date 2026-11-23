@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"log/slog"
+	"math"
 	"strings"
 	"time"
 
@@ -33,8 +34,8 @@ type leverCategories struct {
 }
 
 type leverSalaryRange struct {
-	Min      int    `json:"min"`
-	Max      int    `json:"max"`
+	Min      float64 `json:"min"`
+	Max      float64 `json:"max"`
 	Currency string `json:"currency"`
 	Interval string `json:"interval"`
 }
@@ -96,7 +97,12 @@ func (c *LeverCrawler) fetchCompany(company string) ([]models.Job, error) {
 	if err != nil {
 		return nil, fmt.Errorf("erro ao buscar postings de %q no lever: %w", company, err)
 	}
+	return parseLever(body, company, c.searchTerms)
+}
 
+// parseLever converte a resposta da API do Lever de uma empresa nas vagas
+// que casam com searchTerms.
+func parseLever(body []byte, company string, searchTerms []string) ([]models.Job, error) {
 	var postings []leverPosting
 	if err := json.Unmarshal(body, &postings); err != nil {
 		return nil, fmt.Errorf("erro ao parsear postings de %q no lever: %w", company, err)
@@ -107,11 +113,11 @@ func (c *LeverCrawler) fetchCompany(company string) ([]models.Job, error) {
 		if p.HostedURL == "" || p.Text == "" {
 			continue
 		}
-		if !matchesAnyTerm(p.Text+" "+p.DescriptionPlain, c.searchTerms) {
+		if !matchesAnyTerm(p.Text+" "+p.DescriptionPlain, searchTerms) {
 			continue
 		}
 
-		jobs = append(jobs, models.Job{
+		job := models.Job{
 			ID:          hashID(p.HostedURL),
 			Source:      "lever",
 			Title:       p.Text,
@@ -119,10 +125,11 @@ func (c *LeverCrawler) fetchCompany(company string) ([]models.Job, error) {
 			Location:    leverLocation(p.Categories),
 			URL:         p.HostedURL,
 			Description: p.DescriptionPlain,
-			Salary:      leverSalary(p.SalaryRange),
 			FoundAt:     leverCreatedAt(p.CreatedAt),
 			Status:      "new",
-		})
+		}
+		applyLeverSalary(&job, p.SalaryRange)
+		jobs = append(jobs, job)
 	}
 
 	return jobs, nil
@@ -140,11 +147,49 @@ func leverLocation(cat leverCategories) string {
 	return loc + " · " + commitment
 }
 
-func leverSalary(r *leverSalaryRange) string {
+// applyLeverSalary preenche o salário estruturado e o texto exibido.
+// Faixas anuais ficam no formato curto "$120k–$150k/yr USD"; as demais
+// (por hora, por mês...) vão por extenso, já que dividir 24.5/hora por
+// mil daria "$0k".
+func applyLeverSalary(job *models.Job, r *leverSalaryRange) {
 	if r == nil || (r.Min == 0 && r.Max == 0) {
-		return ""
+		return
 	}
-	return fmt.Sprintf("$%dk–$%dk/yr %s", r.Min/1000, r.Max/1000, r.Currency)
+	period := leverInterval(r.Interval)
+	job.SalaryMin = salaryAmount(r.Min)
+	job.SalaryMax = salaryAmount(r.Max)
+	job.SalaryCurrency = r.Currency
+	job.SalaryPeriod = period
+
+	if period == "yearly" && r.Min >= 1000 {
+		job.Salary = fmt.Sprintf("$%sk–$%sk/yr %s",
+			formatSalaryAmount(math.Round(r.Min/100)/10), formatSalaryAmount(math.Round(r.Max/100)/10), r.Currency)
+		return
+	}
+	job.Salary = salaryText(r.Currency, r.Min, r.Max, period)
+}
+
+// leverInterval traduz o intervalo do Lever ("per-year-salary",
+// "per-hour-wage"...) pros períodos usados no restante do projeto.
+func leverInterval(interval string) string {
+	i := strings.ToLower(interval)
+	switch {
+	case i == "":
+		return "yearly" // padrão do Lever quando a faixa não diz o intervalo
+	case strings.Contains(i, "year"):
+		return "yearly"
+	case strings.Contains(i, "month"):
+		return "monthly"
+	case strings.Contains(i, "bi-week"), strings.Contains(i, "biweek"):
+		return "biweekly"
+	case strings.Contains(i, "week"):
+		return "weekly"
+	case strings.Contains(i, "day"):
+		return "daily"
+	case strings.Contains(i, "hour"):
+		return "hourly"
+	}
+	return i
 }
 
 func leverCreatedAt(unixMillis int64) time.Time {

@@ -2,7 +2,9 @@ package crawler
 
 import (
 	"log/slog"
+	"math"
 	"regexp"
+	"strconv"
 	"strings"
 	"sync"
 	"time"
@@ -58,6 +60,30 @@ func joinNonEmpty(sep string, parts ...string) string {
 		}
 	}
 	return strings.Join(out, sep)
+}
+
+// salaryAmount arredonda um valor de salário da API — que pode ser
+// decimal, como 24.5 por hora — pro inteiro mais próximo, já que
+// SalaryMin/SalaryMax são inteiros. Decodifique sempre em float64: um
+// campo int quebra o json.Unmarshal da resposta inteira no primeiro
+// valor decimal.
+func salaryAmount(v float64) int {
+	return int(math.Round(v))
+}
+
+// formatSalaryAmount formata o valor sem casas decimais desnecessárias
+// (120000, 24.5) pro texto exibido em Salary.
+func formatSalaryAmount(v float64) string {
+	return strconv.FormatFloat(v, 'f', -1, 64)
+}
+
+// salaryText monta o texto exibido em Salary: "USD 24.5–30 / hourly".
+func salaryText(currency string, min, max float64, period string) string {
+	s := strings.TrimSpace(currency + " " + formatSalaryAmount(min) + "–" + formatSalaryAmount(max))
+	if period != "" {
+		s += " / " + period
+	}
+	return s
 }
 
 // parseTimeOrNow faz o parse de s no layout informado e volta time.Now()

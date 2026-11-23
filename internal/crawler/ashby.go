@@ -139,8 +139,8 @@ func applyAshbyCompensation(job *models.Job, comp *ashbyCompensation) {
 		if s.CompensationType != "Salary" || s.MinValue == nil || s.MaxValue == nil {
 			continue
 		}
-		job.SalaryMin = int(*s.MinValue)
-		job.SalaryMax = int(*s.MaxValue)
+		job.SalaryMin = salaryAmount(*s.MinValue)
+		job.SalaryMax = salaryAmount(*s.MaxValue)
 		job.SalaryCurrency = s.CurrencyCode
 		job.SalaryPeriod = ashbyInterval(s.Interval)
 		return

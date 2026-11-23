@@ -126,11 +126,11 @@ func parseGetOnBoard(body []byte) ([]models.Job, int, error) {
 		}
 		// O Get on Board publica faixas salariais em USD brutos por mês.
 		if a.MinSalary != nil && a.MaxSalary != nil {
-			job.SalaryMin = int(*a.MinSalary)
-			job.SalaryMax = int(*a.MaxSalary)
+			job.SalaryMin = salaryAmount(*a.MinSalary)
+			job.SalaryMax = salaryAmount(*a.MaxSalary)
 			job.SalaryCurrency = "USD"
 			job.SalaryPeriod = "monthly"
-			job.Salary = fmt.Sprintf("USD %d–%d / monthly", job.SalaryMin, job.SalaryMax)
+			job.Salary = salaryText("USD", *a.MinSalary, *a.MaxSalary, "monthly")
 		}
 		jobs = append(jobs, job)
 	}
