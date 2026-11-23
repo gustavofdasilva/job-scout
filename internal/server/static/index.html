@@ -57,7 +57,8 @@
             <span class="job-age" v-text="formatAge(job.found_at)"></span>
           </div>
         </div>
-        <div class="empty-state" v-if="visibleJobs.length === 0">Nenhuma vaga com esses filtros.</div>
+        <div class="empty-state load-error" v-if="loadError" v-text="loadError"></div>
+        <div class="empty-state" v-else-if="visibleJobs.length === 0">Nenhuma vaga com esses filtros.</div>
       </div>
     </section>
 
@@ -165,6 +166,7 @@
     function App() {
       return {
         jobs: [],
+        loadError: '',
         tab: 'todas',
         minScore: 40,
         selectedId: null,
@@ -199,12 +201,19 @@
         async loadJobs() {
           try {
             const res = await fetch('/api/jobs');
-            this.jobs = await res.json();
+            const data = await res.json().catch(() => null);
+            if (!res.ok || !Array.isArray(data)) {
+              throw new Error(data && data.error ? data.error : 'HTTP ' + res.status);
+            }
+            this.jobs = data;
+            this.loadError = '';
             if (!this.mobile && !this.selectedId && this.jobs.length) {
               this.selectedId = this.jobs[0].id;
             }
           } catch (err) {
             console.error('falha ao carregar vagas', err);
+            this.jobs = [];
+            this.loadError = `Não foi possível carregar as vagas (${err.message}).`;
           }
         },
 

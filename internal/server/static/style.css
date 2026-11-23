@@ -392,6 +392,10 @@ header {
   color: var(--text-dim);
 }
 
+.empty-state.load-error {
+  color: var(--score-low-fg);
+}
+
 /* ---------- Detail pane ---------- */
 
 .detail-pane {
