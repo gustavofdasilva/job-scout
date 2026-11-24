@@ -148,14 +148,14 @@ ignorado — não roda dois ciclos em paralelo.
 
 | Rota | Descrição |
 |---|---|
-| `GET /api/jobs?status=&min_score=&source=&limit=&offset=` | Página de vagas + análise (array JSON), ordenadas por fit_score e found_at decrescentes. `limit` padrão 50, máx. 200; total no header `X-Total-Count`. Sem `status`, omite as vagas `filtered` |
+| `GET /api/jobs?status=&min_score=&source=&limit=&offset=` | Página de vagas + análise (array JSON), ordenadas por fit_score e found_at decrescentes. `limit` padrão 50, máx. 200; total no header `X-Total-Count`. Sem `status`, omite as vagas `filtrada` |
 | `GET /api/jobs/counts?min_score=&source=` | Contagem de vagas por status (abas do dashboard) e lista de fontes |
 | `GET /api/jobs/{id}` | Detalhes completos de uma vaga (job + analysis) |
 | `POST /api/jobs/{id}/analyze` | Analisa (ou reanalisa) a vaga via LLM — primeira análise se nunca rodou, ou atualiza fit_score/resumo preservando currículo/checklist já gerados |
 | `GET /api/jobs/{id}/resume` | Serve o currículo em PDF (ou `.md` como fallback) |
 | `POST /api/jobs/{id}/resume` | Gera o currículo completo (Markdown/PDF) pra essa vaga — exige vaga já analisada |
 | `POST /api/jobs/{id}/checklist` | Gera o checklist de palavras-chave/pontos pro currículo dessa vaga — exige vaga já analisada |
-| `POST /api/jobs/{id}/status` | Atualiza status (`new`/`reviewed`/`applied`/`ignored`/`filtered`) |
+| `POST /api/jobs/{id}/status` | Atualiza status (`new`/`reviewed`/`applied`/`ignored`/`filtrada`) |
 | `POST /api/trigger` | Dispara o pipeline imediatamente |
 | `GET /api/status` | Último run, próximo run, contagem de vagas por status |
 

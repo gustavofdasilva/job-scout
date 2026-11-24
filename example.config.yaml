@@ -61,46 +61,46 @@ max_analyses_per_cycle: 50
 # Se omitido (ou 0), usa 3. Valor negativo desativa o limite.
 max_analysis_attempts: 3
 
-# Filtro por título aplicado antes do LLM. Vagas novas ainda não analisadas
-# cujo título casar com algum padrão de title_exclude, ou não casar com
-# nenhum termo de title_require, ganham o status "filtered" (aba Filtradas
-# do dashboard) sem chamar o LLM e não contam em max_analyses_per_cycle.
-# Cada padrão casa como palavra/frase inteira, sem diferenciar maiúsculas:
-# "sales" pega "Pre-Sales Engineer" mas não "Salesforce Developer"; "ios" não
-# pega "Studios". Não é regex. Atenção: "engineer" não casa com
-# "engineering".
-# Se omitidos, usam as listas abaixo; uma lista vazia ([]) desativa a regra.
-title_exclude:
-  - sales
-  - account executive
-  - account manager
-  - recruiter
-  - recruiting
-  - talent acquisition
-  - product manager
-  - marketing
-  - designer
-  - support specialist
-  - business development
-  - director
-  - head of
-  - android
-  - ios
-  - mobile
-title_require:
-  - engineer
-  - developer
-  - desenvolvedor
-  - desenvolvedora
-  - engenheiro
-  - engenheira
-  - programador
-  - programadora
-  - sre
-  - devops
-  - backend
-  - back-end
-  - platform
+# =============================================================================
+# Filtro global de vagas — aplicado a TODAS as fontes, antes do LLM.
+# =============================================================================
+# Vagas novas passam por ele logo depois do crawl e da deduplicação; as
+# vagas pendentes que já estavam no banco passam na subida do servidor.
+# 1. Título casa com algum title_exclude → rejeitada (motivo "title_exclude").
+# 2. Texto = título + descrição (sem HTML); os trechos que casam com
+#    ignore_patterns são apagados antes do teste (evita falso positivo com
+#    "go-to-market", "go live" etc.).
+# 3. Aprovada se o texto casar com pelo menos um require_patterns; senão,
+#    rejeitada (motivo "sem Go").
+# Rejeitadas ficam com status "filtrada" (aba Filtradas do dashboard), não
+# chamam o LLM e não contam em max_analyses_per_cycle.
+# Regex no formato do Go (RE2): (?i) = ignora maiúsculas, \b = borda de
+# palavra. Uma regex inválida impede o job-scout de subir. Sem este bloco
+# (ou com enabled: false), nenhuma vaga é filtrada.
+job_filter:
+  enabled: true
+  require_patterns:
+    - '(?i)\bgolang\b'
+    # "Go developer", "Go engineer", "Go services", "Go language"...
+    - '(?i)\bgo\s*(lang|developer|engineer|programming|language|backend|back-end|services?|microservices?|code|codebase|stack)\b'
+    # "written in Go", "experience with Go", "experiência com Go"
+    - '(?i)\b(in|with|using|em|com|de)\s+go\b'
+    # Listas de tecnologias: "Go, Rust", "Python/Go", "(Go)", "Go |"
+    - '(?i)(^|[\s,/(|])go\s*[,/)|]'
+    - '(?i)[,/(|]\s*go\b'
+  ignore_patterns:
+    - '(?i)go[- ]to[- ]market'
+    - '(?i)\bgo[- ]live\b'
+    - '(?i)\bon the go\b'
+    - '(?i)\bgo[- ]getter\b'
+    - '(?i)\bgo (above|beyond|the extra mile)\b'
+    - '(?i)\bgood to go\b'
+    - '(?i)\bready to go\b'
+  # Títulos que nunca interessam, mesmo citando Go.
+  title_exclude:
+    - '(?i)\b(sales|account executive|account manager|recruiter|recruiting|marketing|designer|product manager|business development|customer success|pre-sales|presales|solutions? (engineer|consultant)|support (engineer|specialist))\b'
+    - '(?i)\b(director|head of|vp|vice president|engineering manager)\b'
+    - '(?i)\b(android|ios|mobile|frontend|front-end)\b'
 
 # Fontes cujas vagas pendentes vão primeiro para o LLM (ATS e boards
 # remotos); dentro de cada grupo, as mais recentes primeiro. Se omitido, usa

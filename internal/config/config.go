@@ -5,6 +5,8 @@ import (
 	"os"
 
 	"gopkg.in/yaml.v3"
+
+	"job-scout/internal/jobfilter"
 )
 
 // Crawler representa a configuração de um crawler individual.
@@ -50,14 +52,9 @@ type Config struct {
 	// defaultMaxAnalysisAttempts; negativo desativa o limite.
 	MaxAnalysisAttempts int `yaml:"max_analysis_attempts"`
 
-	// TitleExclude e TitleRequire filtram vagas pelo título antes da
-	// análise (ver internal/titlefilter): casar com algum padrão de
-	// TitleExclude, ou não casar com nenhum de TitleRequire, marca a vaga
-	// como "filtered" sem chamar o LLM. Omitidos, usam
-	// defaultTitleExclude/defaultTitleRequire; uma lista vazia ([])
-	// desativa a regra.
-	TitleExclude []string `yaml:"title_exclude"`
-	TitleRequire []string `yaml:"title_require"`
+	// JobFilter é o filtro global de vagas (ver internal/jobfilter),
+	// aplicado a todas as fontes antes do LLM. Omitido = desativado.
+	JobFilter jobfilter.Config `yaml:"job_filter"`
 
 	// PrioritySources são as fontes (ATS e boards remotos) cujas vagas
 	// pendentes vão primeiro para o LLM; dentro de cada grupo, as mais
@@ -66,15 +63,6 @@ type Config struct {
 }
 
 var (
-	defaultTitleExclude = []string{
-		"sales", "account executive", "account manager", "recruiter", "recruiting", "talent acquisition",
-		"product manager", "marketing", "designer", "support specialist", "business development",
-		"director", "head of", "android", "ios", "mobile",
-	}
-	defaultTitleRequire = []string{
-		"engineer", "developer", "desenvolvedor", "desenvolvedora", "engenheiro", "engenheira",
-		"programador", "programadora", "sre", "devops", "backend", "back-end", "platform",
-	}
 	defaultPrioritySources = []string{
 		"ashby", "greenhouse", "lever", "workable", "smartrecruiters",
 		"himalayas", "jobicy", "workingnomads", "arbeitnow", "remotive",
@@ -108,6 +96,16 @@ func Load(path string) (*Config, error) {
 		return nil, fmt.Errorf("erro ao fazer parse do config %q: %w", path, err)
 	}
 
+	// title_exclude/title_require já existiram fora de job_filter; sem este
+	// aviso seriam ignorados em silêncio.
+	var legacy struct {
+		TitleExclude []string `yaml:"title_exclude"`
+		TitleRequire []string `yaml:"title_require"`
+	}
+	if err := yaml.Unmarshal(data, &legacy); err == nil && (legacy.TitleExclude != nil || legacy.TitleRequire != nil) {
+		return nil, fmt.Errorf("config %q: title_exclude/title_require no nível principal não existem mais — use job_filter.title_exclude e job_filter.require_patterns", path)
+	}
+
 	if cfg.OmniRouteBaseURL == "" {
 		cfg.OmniRouteBaseURL = defaultOmniRouteBaseURL
 	}
@@ -122,13 +120,6 @@ func Load(path string) (*Config, error) {
 	}
 	if cfg.MaxAnalysisAttempts == 0 {
 		cfg.MaxAnalysisAttempts = defaultMaxAnalysisAttempts
-	}
-	// nil = campo omitido no YAML; "[]" chega como slice vazio e desativa.
-	if cfg.TitleExclude == nil {
-		cfg.TitleExclude = defaultTitleExclude
-	}
-	if cfg.TitleRequire == nil {
-		cfg.TitleRequire = defaultTitleRequire
 	}
 	if cfg.PrioritySources == nil {
 		cfg.PrioritySources = defaultPrioritySources

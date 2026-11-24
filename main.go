@@ -15,12 +15,12 @@ import (
 	"job-scout/internal/checklist"
 	"job-scout/internal/config"
 	"job-scout/internal/crawler"
+	"job-scout/internal/jobfilter"
 	"job-scout/internal/notifier"
 	"job-scout/internal/resume"
 	"job-scout/internal/scheduler"
 	"job-scout/internal/server"
 	"job-scout/internal/storage"
-	"job-scout/internal/titlefilter"
 )
 
 const resumeOutputDir = "data/resumes"
@@ -32,6 +32,14 @@ func main() {
 	cfg, err := config.Load("config.yaml")
 	if err != nil {
 		slog.Error("falha ao carregar configuração", "error", err)
+		os.Exit(1)
+	}
+
+	// Compila as regex do job_filter antes de qualquer outra coisa: uma
+	// regex inválida impede a subida, com o campo e o padrão no erro.
+	jobFilter, err := jobfilter.New(cfg.JobFilter)
+	if err != nil {
+		slog.Error("falha ao carregar job_filter do config.yaml", "error", err)
 		os.Exit(1)
 	}
 
@@ -62,19 +70,21 @@ func main() {
 		slog.Warn("telegram: bot_token ou chat_id não configurados — notificações desabilitadas")
 	}
 
-	titleFilter, err := titlefilter.New(cfg.TitleExclude, cfg.TitleRequire)
-	if err != nil {
-		slog.Error("falha ao carregar filtro de título", "error", err)
-		os.Exit(1)
-	}
-
-	sched := scheduler.NewScheduler(cfg, db, orchestrator, az, telegram, titleFilter)
-	// Aplica o filtro de título já na subida, pra vagas que estavam
-	// pendentes antes de ele existir não esperarem o próximo ciclo.
-	if filtered, pending, err := sched.FilterPendingByTitle(); err != nil {
-		slog.Error("falha ao aplicar filtro de título às vagas pendentes", "error", err)
+	sched := scheduler.NewScheduler(cfg, db, orchestrator, az, telegram, jobFilter)
+	// Aplica o job_filter já na subida às vagas que estavam pendentes no
+	// banco (gravadas antes do filtro existir ou de uma mudança nas regex).
+	if stats, pending, err := sched.FilterPendingJobs(); err != nil {
+		slog.Error("falha ao aplicar job_filter às vagas pendentes", "error", err)
+	} else if jobFilter.Enabled() {
+		passed, filtered := stats.Total()
+		slog.Info("job_filter aplicado às vagas pendentes",
+			"filtradas", filtered,
+			"aprovadas", passed,
+			"pendentes_para_llm", pending,
+			"filtradas_por_fonte", stats.Filtered,
+		)
 	} else {
-		slog.Info("filtro de título aplicado às vagas pendentes", "filtradas", filtered, "pendentes_para_llm", pending)
+		slog.Info("job_filter desativado", "pendentes_para_llm", pending)
 	}
 	if err := sched.Run(); err != nil {
 		slog.Error("falha ao iniciar scheduler", "error", err)

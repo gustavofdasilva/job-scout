@@ -16,10 +16,10 @@ import (
 	"job-scout/internal/analyzer"
 	"job-scout/internal/config"
 	"job-scout/internal/crawler"
+	"job-scout/internal/jobfilter"
 	"job-scout/internal/models"
 	"job-scout/internal/notifier"
 	"job-scout/internal/storage"
-	"job-scout/internal/titlefilter"
 )
 
 // Scheduler agenda a execução periódica do pipeline de acordo com a
@@ -30,7 +30,7 @@ type Scheduler struct {
 	orchestrator *crawler.Orchestrator
 	analyzer     *analyzer.Analyzer
 	telegram     *notifier.Telegram
-	titleFilter  *titlefilter.Filter
+	jobFilter    *jobfilter.Filter
 
 	cron *cron.Cron
 	wg   sync.WaitGroup
@@ -42,45 +42,83 @@ type Scheduler struct {
 
 // NewScheduler cria um Scheduler com as dependências do pipeline já
 // resolvidas.
-func NewScheduler(cfg *config.Config, db *storage.DB, orchestrator *crawler.Orchestrator, az *analyzer.Analyzer, telegram *notifier.Telegram, titleFilter *titlefilter.Filter) *Scheduler {
+func NewScheduler(cfg *config.Config, db *storage.DB, orchestrator *crawler.Orchestrator, az *analyzer.Analyzer, telegram *notifier.Telegram, jobFilter *jobfilter.Filter) *Scheduler {
 	return &Scheduler{
 		cfg:          cfg,
 		db:           db,
 		orchestrator: orchestrator,
 		analyzer:     az,
 		telegram:     telegram,
-		titleFilter:  titleFilter,
+		jobFilter:    jobFilter,
 		cron:         cron.New(),
 	}
 }
 
-// FilterPendingByTitle marca como "filtered" as vagas novas ainda não
-// analisadas cujo título o filtro rejeita, pra elas não irem ao LLM nem
-// ocuparem o limite de análises por ciclo. Roda no início de cada ciclo e
-// na subida do servidor (pega também as vagas que já estavam pendentes).
-// Retorna quantas foram filtradas e quantas continuam pendentes de análise.
-func (s *Scheduler) FilterPendingByTitle() (filtered, pending int, err error) {
-	if s.titleFilter.Enabled() {
-		candidates, err := s.db.GetUnanalyzedNewJobTitles()
+// FilterStats conta, por fonte, quantas vagas passaram no job_filter e
+// quantas foram filtradas.
+type FilterStats struct {
+	Passed   map[string]int
+	Filtered map[string]int
+}
+
+func newFilterStats() FilterStats {
+	return FilterStats{Passed: map[string]int{}, Filtered: map[string]int{}}
+}
+
+// Total devolve o total de vagas que passaram e que foram filtradas.
+func (st FilterStats) Total() (passed, filtered int) {
+	for _, n := range st.Passed {
+		passed += n
+	}
+	for _, n := range st.Filtered {
+		filtered += n
+	}
+	return passed, filtered
+}
+
+// applyFilter aplica o job_filter à vaga: se ela for rejeitada, muda o
+// status para "filtrada" e grava o motivo. Devolve se ela passou.
+func (s *Scheduler) applyFilter(j *models.Job, st FilterStats) bool {
+	reason, ok := s.jobFilter.Check(j.Title, j.Description)
+	if ok {
+		st.Passed[j.Source]++
+		return true
+	}
+	j.Status = models.JobStatusFiltered
+	j.FilterReason = reason
+	st.Filtered[j.Source]++
+	slog.Debug("pipeline: vaga filtrada", "source", j.Source, "title", j.Title, "motivo", reason)
+	return false
+}
+
+// FilterPendingJobs aplica o job_filter às vagas que já estavam no banco
+// com status "new" e sem análise, marcando como "filtrada" as que não
+// passam. Roda na subida do servidor, o que cobre as vagas gravadas antes
+// do filtro existir ou de uma mudança nas regex; as vagas novas de cada
+// ciclo são filtradas na inserção. Devolve as contagens por fonte e
+// quantas vagas continuam pendentes de análise.
+func (s *Scheduler) FilterPendingJobs() (FilterStats, int, error) {
+	st := newFilterStats()
+	if s.jobFilter.Enabled() {
+		candidates, err := s.db.GetUnanalyzedNewJobs()
 		if err != nil {
-			return 0, 0, err
+			return st, 0, err
 		}
-		var ids []string
-		for _, j := range candidates {
-			if reason, reject := s.titleFilter.Reject(j.Title); reject {
-				slog.Debug("pipeline: vaga filtrada pelo título", "title", j.Title, "motivo", reason)
-				ids = append(ids, j.ID)
+		reasons := map[string]string{}
+		for i := range candidates {
+			if !s.applyFilter(&candidates[i], st) {
+				reasons[candidates[i].ID] = candidates[i].FilterReason
 			}
 		}
-		if filtered, err = s.db.MarkJobsFiltered(ids); err != nil {
-			return 0, 0, err
+		if _, err := s.db.MarkJobsFiltered(reasons); err != nil {
+			return st, 0, err
 		}
 	}
-	pending, err = s.db.CountPendingAnalysisJobs(s.cfg.MaxAnalysisAttempts)
+	pending, err := s.db.CountPendingAnalysisJobs(s.cfg.MaxAnalysisAttempts)
 	if err != nil {
-		return filtered, 0, err
+		return st, 0, err
 	}
-	return filtered, pending, nil
+	return st, pending, nil
 }
 
 // Run registra a expressão cron do config e inicia o agendador em segundo
@@ -190,6 +228,7 @@ func (s *Scheduler) runPipeline() {
 	}
 
 	bySource := make(map[string]int)
+	filterStats := newFilterStats()
 	var novas int
 	for _, j := range jobs {
 		bySource[j.Source]++
@@ -197,6 +236,12 @@ func (s *Scheduler) runPipeline() {
 		// ATS da empresa e em um ou mais boards remotos, com URLs diferentes.
 		if j.URL == "" || s.db.JobExistsByURL(j.URL) || s.db.JobExistsByDedupKey(j.DedupKey()) {
 			continue
+		}
+		// Vagas que não passam no job_filter são gravadas mesmo assim, já
+		// como "filtrada": ficam visíveis na aba Filtradas, contam pro dedup
+		// e nunca vão pro LLM.
+		if s.jobFilter.Enabled() {
+			s.applyFilter(&j, filterStats)
 		}
 		if err := s.db.InsertJob(j); err != nil {
 			slog.Warn("pipeline: falha ao salvar vaga", "url", j.URL, "error", err)
@@ -206,9 +251,15 @@ func (s *Scheduler) runPipeline() {
 	}
 	slog.Info("pipeline: crawlers concluídos", "total_vagas", len(jobs), "novas_vagas", novas, "por_fonte", bySource)
 
-	filtradas, _, err := s.FilterPendingByTitle()
-	if err != nil {
-		slog.Error("pipeline: falha ao aplicar filtro de título", "error", err)
+	var aprovadas, filtradas int
+	if s.jobFilter.Enabled() {
+		aprovadas, filtradas = filterStats.Total()
+		slog.Info("pipeline: job_filter aplicado às vagas novas",
+			"aprovadas", aprovadas,
+			"filtradas", filtradas,
+			"aprovadas_por_fonte", filterStats.Passed,
+			"filtradas_por_fonte", filterStats.Filtered,
+		)
 	}
 
 	var pendentes, analisadas, comFitAlto int
@@ -260,7 +311,7 @@ func (s *Scheduler) runPipeline() {
 		"duracao", time.Since(start),
 		"vagas_encontradas", len(jobs),
 		"vagas_novas", novas,
-		"vagas_filtradas_titulo", filtradas,
+		"vagas_filtradas", filtradas,
 		"vagas_pendentes", pendentes,
 		"vagas_analisadas", analisadas,
 		"vagas_com_fit_alto", comFitAlto,

@@ -9,9 +9,9 @@ import (
 // Status de vaga.
 const (
 	JobStatusNew = "new"
-	// JobStatusFiltered marca vagas descartadas pelo filtro de título
-	// (title_exclude/title_require) sem passar pelo LLM.
-	JobStatusFiltered = "filtered"
+	// JobStatusFiltered marca vagas descartadas pelo job_filter sem passar
+	// pelo LLM; o motivo fica em Job.FilterReason.
+	JobStatusFiltered = "filtrada"
 )
 
 // Job representa uma vaga encontrada por um crawler.
@@ -38,6 +38,10 @@ type Job struct {
 	SalaryMax      int    `json:"salary_max"`
 	SalaryCurrency string `json:"salary_currency"`
 	SalaryPeriod   string `json:"salary_period"`
+
+	// FilterReason é o motivo pelo qual o job_filter descartou a vaga
+	// ("title_exclude" ou "sem Go"); vazio se ela não foi filtrada.
+	FilterReason string `json:"filter_reason"`
 }
 
 // DedupKey identifica a mesma vaga publicada em fontes diferentes (ex: no

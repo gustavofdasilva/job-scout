@@ -238,7 +238,7 @@ func TestPendingAnalysisPriorityAndFiltered(t *testing.T) {
 			t.Fatal(err)
 		}
 	}
-	if n, err := db.MarkJobsFiltered([]string{"sales"}); err != nil || n != 1 {
+	if n, err := db.MarkJobsFiltered(map[string]string{"sales": "title_exclude"}); err != nil || n != 1 {
 		t.Fatalf("MarkJobsFiltered: n=%d err=%v", n, err)
 	}
 

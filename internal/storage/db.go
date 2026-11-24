@@ -117,6 +117,8 @@ CREATE TABLE IF NOT EXISTS profile (
 		{"salary_currency", "TEXT NOT NULL DEFAULT ''"},
 		{"salary_period", "TEXT NOT NULL DEFAULT ''"},
 		{"dedup_key", "TEXT NOT NULL DEFAULT ''"},
+		// Motivo do job_filter para vagas com status "filtrada".
+		{"filter_reason", "TEXT NOT NULL DEFAULT ''"},
 	}
 	for _, c := range newJobColumns {
 		if err := addColumnIfMissing(db.conn, "jobs", c.name, c.sqlType); err != nil {
@@ -129,6 +131,11 @@ CREATE TABLE IF NOT EXISTS profile (
 	// Usado pela subquery "análise mais recente da vaga" da listagem.
 	if _, err := db.conn.Exec(`CREATE INDEX IF NOT EXISTS idx_analyses_job_created ON analyses(job_id, created_at)`); err != nil {
 		return fmt.Errorf("erro ao criar índice de analyses: %w", err)
+	}
+
+	// O status de vaga descartada pelo filtro já se chamou "filtered".
+	if _, err := db.conn.Exec(`UPDATE jobs SET status = ? WHERE status = 'filtered'`, models.JobStatusFiltered); err != nil {
+		return fmt.Errorf("erro ao renomear status filtered: %w", err)
 	}
 
 	if err := db.backfillDedupKeys(); err != nil {
@@ -298,10 +305,10 @@ func (db *DB) InsertJob(job models.Job) error {
 
 	_, err := db.conn.Exec(
 		`INSERT INTO jobs (id, source, title, company, location, url, description, salary, found_at, status,
-		                   location_restriction, salary_min, salary_max, salary_currency, salary_period, dedup_key)
-		 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+		                   location_restriction, salary_min, salary_max, salary_currency, salary_period, dedup_key, filter_reason)
+		 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
 		job.ID, job.Source, job.Title, job.Company, job.Location, job.URL, job.Description, job.Salary, job.FoundAt, job.Status,
-		job.LocationRestriction, job.SalaryMin, job.SalaryMax, job.SalaryCurrency, job.SalaryPeriod, job.DedupKey(),
+		job.LocationRestriction, job.SalaryMin, job.SalaryMax, job.SalaryCurrency, job.SalaryPeriod, job.DedupKey(), job.FilterReason,
 	)
 	if err != nil {
 		return fmt.Errorf("erro ao inserir vaga: %w", err)
@@ -408,11 +415,11 @@ func (db *DB) CountPendingAnalysisJobs(maxAttempts int) (int, error) {
 	return n, nil
 }
 
-// GetUnanalyzedNewJobTitles retorna id e título das vagas com status "new"
-// que ainda não têm análise — as candidatas ao filtro de título.
-func (db *DB) GetUnanalyzedNewJobTitles() ([]models.Job, error) {
+// GetUnanalyzedNewJobs retorna id, fonte, título e descrição das vagas com
+// status "new" que ainda não têm análise — as candidatas ao job_filter.
+func (db *DB) GetUnanalyzedNewJobs() ([]models.Job, error) {
 	rows, err := db.conn.Query(`
-		SELECT j.id, j.title FROM jobs j
+		SELECT j.id, j.source, j.title, COALESCE(j.description, '') FROM jobs j
 		WHERE j.status = ? AND NOT EXISTS (SELECT 1 FROM analyses a WHERE a.job_id = j.id)
 	`, models.JobStatusNew)
 	if err != nil {
@@ -423,7 +430,7 @@ func (db *DB) GetUnanalyzedNewJobTitles() ([]models.Job, error) {
 	var jobs []models.Job
 	for rows.Next() {
 		var j models.Job
-		if err := rows.Scan(&j.ID, &j.Title); err != nil {
+		if err := rows.Scan(&j.ID, &j.Source, &j.Title, &j.Description); err != nil {
 			return nil, fmt.Errorf("erro ao ler vaga não analisada: %w", err)
 		}
 		jobs = append(jobs, j)
@@ -434,10 +441,10 @@ func (db *DB) GetUnanalyzedNewJobTitles() ([]models.Job, error) {
 	return jobs, nil
 }
 
-// MarkJobsFiltered muda para "filtered" o status das vagas informadas, numa
-// transação só. Retorna quantas foram atualizadas.
-func (db *DB) MarkJobsFiltered(ids []string) (int, error) {
-	if len(ids) == 0 {
+// MarkJobsFiltered muda para "filtrada" o status das vagas informadas (id →
+// motivo), numa transação só. Retorna quantas foram atualizadas.
+func (db *DB) MarkJobsFiltered(reasons map[string]string) (int, error) {
+	if len(reasons) == 0 {
 		return 0, nil
 	}
 	tx, err := db.conn.Begin()
@@ -446,15 +453,15 @@ func (db *DB) MarkJobsFiltered(ids []string) (int, error) {
 	}
 	defer tx.Rollback()
 
-	stmt, err := tx.Prepare(`UPDATE jobs SET status = ? WHERE id = ?`)
+	stmt, err := tx.Prepare(`UPDATE jobs SET status = ?, filter_reason = ? WHERE id = ?`)
 	if err != nil {
 		return 0, fmt.Errorf("erro ao preparar atualização de status: %w", err)
 	}
 	defer stmt.Close()
 
 	var n int
-	for _, id := range ids {
-		res, err := stmt.Exec(models.JobStatusFiltered, id)
+	for id, reason := range reasons {
+		res, err := stmt.Exec(models.JobStatusFiltered, reason, id)
 		if err != nil {
 			return 0, fmt.Errorf("erro ao marcar vaga %q como filtrada: %w", id, err)
 		}
@@ -565,7 +572,7 @@ type JobWithAnalysis struct {
 // GetJobsWithAnalysis (lista, com filtros) quanto por GetJobWithAnalysisByID
 // (uma vaga só) — sempre traz a análise mais recente de cada vaga (se houver).
 const jobsWithAnalysisSelect = `
-	SELECT j.id, j.source, j.title, j.company, j.location, j.url, j.description, j.salary, j.found_at, j.status, j.location_restriction, j.salary_min, j.salary_max, j.salary_currency, j.salary_period,
+	SELECT j.id, j.source, j.title, j.company, j.location, j.url, j.description, j.salary, j.found_at, j.status, j.location_restriction, j.salary_min, j.salary_max, j.salary_currency, j.salary_period, j.filter_reason,
 	       COALESCE(a.id, ''), COALESCE(a.fit_score, 0), COALESCE(a.summary, ''), COALESCE(a.benefits, ''), COALESCE(a.fit_reasoning, ''),
 	       COALESCE(a.resume_pdf_path, ''), COALESCE(a.resume_keywords, ''), COALESCE(a.resume_points, '')
 ` + jobsWithAnalysisFrom
@@ -580,7 +587,7 @@ func scanJobWithAnalysis(row rowScanner) (JobWithAnalysis, error) {
 	var item JobWithAnalysis
 	var analysisID string
 	if err := row.Scan(
-		&item.ID, &item.Source, &item.Title, &item.Company, &item.Location, &item.URL, &item.Description, &item.Salary, &item.FoundAt, &item.Status, &item.LocationRestriction, &item.SalaryMin, &item.SalaryMax, &item.SalaryCurrency, &item.SalaryPeriod,
+		&item.ID, &item.Source, &item.Title, &item.Company, &item.Location, &item.URL, &item.Description, &item.Salary, &item.FoundAt, &item.Status, &item.LocationRestriction, &item.SalaryMin, &item.SalaryMax, &item.SalaryCurrency, &item.SalaryPeriod, &item.FilterReason,
 		&analysisID, &item.FitScore, &item.Summary, &item.Benefits, &item.FitReasoning,
 		&item.ResumePDFPath, &item.ResumeKeywords, &item.ResumePoints,
 	); err != nil {
@@ -593,8 +600,8 @@ func scanJobWithAnalysis(row rowScanner) (JobWithAnalysis, error) {
 // JobFilter filtra e pagina a listagem de vagas do dashboard. Campos
 // zerados desativam o respectivo filtro; Limit <= 0 traz todas as vagas.
 type JobFilter struct {
-	// Status vazio lista todas as vagas menos as descartadas pelo filtro de
-	// título ("filtered"), que só aparecem pedindo esse status.
+	// Status vazio lista todas as vagas menos as descartadas pelo
+	// job_filter ("filtrada"), que só aparecem pedindo esse status.
 	Status string
 	// MinScore só se aplica a vagas já analisadas: as ainda não analisadas
 	// continuam aparecendo (no fim da lista, com score 0), como o dashboard
@@ -847,7 +854,11 @@ func (db *DB) UpdateAnalysisResult(analysisID string, a models.Analysis) error {
 
 // UpdateJobStatus atualiza o status de uma vaga existente.
 func (db *DB) UpdateJobStatus(id string, status string) error {
-	res, err := db.conn.Exec(`UPDATE jobs SET status = ? WHERE id = ?`, status, id)
+	// Sair de "filtrada" (ex: o usuário quer a vaga de volta) limpa o motivo.
+	res, err := db.conn.Exec(
+		`UPDATE jobs SET status = ?, filter_reason = CASE WHEN ? = ? THEN filter_reason ELSE '' END WHERE id = ?`,
+		status, status, models.JobStatusFiltered, id,
+	)
 	if err != nil {
 		return fmt.Errorf("erro ao atualizar status da vaga %q: %w", id, err)
 	}
